@@ -34,7 +34,7 @@ h3 { font-size: 13px; margin: 20px 0 8px; color: #b8b8c0; }
 .field { margin-bottom: 14px; max-width: 460px; }
 .field label { display: block; font-size: 11px; color: #888; margin-bottom: 4px; }
 .field .hint { font-size: 11px; color: #666; margin-top: 4px; }
-input, select {
+input, select, textarea {
   width: 100%;
   background: #222228;
   border: 1px solid rgba(255,255,255,0.1);
@@ -43,7 +43,24 @@ input, select {
   border-radius: 6px;
   font-size: 13px;
 }
-input:focus, select:focus { outline: none; border-color: #60a5fa; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: #60a5fa; }
+input:disabled { opacity: 0.5; }
+textarea {
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  resize: vertical;
+}
+.file-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 10px;
+  margin-bottom: 6px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 6px;
+  font-size: 12px;
+}
 .row { display: flex; gap: 8px; align-items: center; }
 .row input { flex: 1; }
 button.btn {

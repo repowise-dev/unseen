@@ -1,9 +1,21 @@
 # Profiles
 
-A profile is one YAML file that defines how the copilot behaves. Built-ins ship
-with the app; your own live in the user profiles folder (Settings → Profiles →
-"Open profiles folder"). Files hot-reload on save. A user profile with the same
-`id` as a built-in overrides it.
+A profile defines how the copilot behaves — its prompt, when it speaks up, its
+output style, and which of your documents it knows.
+
+**The easy way: Settings → Profiles.** Click **Edit** on any profile to change
+its system prompt, triggers, output style, and model override in a form, and
+**Attach files…** to add knowledge documents (product docs, battlecards, prep
+notes) via a file picker — they're copied into the app's knowledge folder and
+injected into the prompt. Editing a built-in creates your own copy that
+overrides it; deleting your copy restores the original. **⧉ Duplicate** clones
+any profile as a starting point, **+ New profile** starts from a template.
+
+**The power way: YAML files.** Under the hood every profile is one YAML file.
+Built-ins ship with the app; yours live in the user profiles folder (Settings →
+Profiles → "Open profiles folder"). Files hot-reload on save, so you can edit
+them in any editor while the app runs. A user profile with the same `id` as a
+built-in overrides it.
 
 ## Full schema
 

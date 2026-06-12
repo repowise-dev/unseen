@@ -24,10 +24,16 @@ const api = {
   secretsStatus: (): Promise<Record<string, boolean>> => ipcRenderer.invoke(IPC.secretsStatus),
 
   profilesList: (): Promise<ProfileSummary[]> => ipcRenderer.invoke(IPC.profilesList),
+  profilesGet: (id: string): Promise<Profile | null> => ipcRenderer.invoke(IPC.profilesGet, id),
   profilesGetActive: (): Promise<Profile> => ipcRenderer.invoke(IPC.profilesGetActive),
   profilesSetActive: (id: string): Promise<Profile> =>
     ipcRenderer.invoke(IPC.profilesSetActive, id),
+  profilesSave: (profile: Profile): Promise<{ ok: boolean; error?: string }> =>
+    ipcRenderer.invoke(IPC.profilesSave, profile),
+  profilesDelete: (id: string): Promise<{ ok: boolean; error?: string }> =>
+    ipcRenderer.invoke(IPC.profilesDelete, id),
   profilesOpenFolder: (): Promise<void> => ipcRenderer.invoke(IPC.profilesOpenFolder),
+  knowledgeImport: (): Promise<string[]> => ipcRenderer.invoke(IPC.knowledgeImport),
 
   providersList: (): Promise<{ llm: ProviderInfo[]; stt: ProviderInfo[] }> =>
     ipcRenderer.invoke(IPC.providersList),

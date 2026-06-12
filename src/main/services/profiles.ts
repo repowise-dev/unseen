@@ -1,7 +1,16 @@
 import { app, shell, webContents } from 'electron';
 import { join, basename } from 'path';
-import { readFileSync, readdirSync, existsSync, mkdirSync, watch, type FSWatcher } from 'fs';
-import { load as parseYaml } from 'js-yaml';
+import {
+  readFileSync,
+  readdirSync,
+  existsSync,
+  mkdirSync,
+  writeFileSync,
+  rmSync,
+  watch,
+  type FSWatcher,
+} from 'fs';
+import { load as parseYaml, dump as dumpYaml } from 'js-yaml';
 import { ProfileSchema } from '../../shared/profile-schema';
 import type { Profile, ProfileSummary } from '../../shared/types';
 import { IPC } from '../../shared/ipc-contract';
@@ -103,6 +112,36 @@ export function getActiveProfile(): Profile {
   const fallback = first && getProfile(first.id);
   if (fallback) return fallback;
   throw new Error('No profiles found — reinstall or add a profile YAML.');
+}
+
+/** Validate and write a profile YAML into the user dir. Saving with a
+ *  built-in's id creates the user's editable override of that built-in. */
+export function saveProfile(raw: unknown): { ok: boolean; error?: string } {
+  const parsed = ProfileSchema.safeParse(raw);
+  if (!parsed.success) {
+    const issue = parsed.error.issues[0];
+    return { ok: false, error: `${issue.path.join('.') || '(root)'} — ${issue.message}` };
+  }
+  writeFileSync(join(userDir(), `${parsed.data.id}.yaml`), dumpYaml(parsed.data, { lineWidth: 100 }));
+  broadcastChange();
+  return { ok: true };
+}
+
+/** Delete a user profile file. If it shadowed a built-in, the built-in
+ *  reappears; built-ins themselves cannot be deleted. */
+export function deleteProfile(id: string): { ok: boolean; error?: string } {
+  const path = join(userDir(), `${id}.yaml`);
+  const alt = join(userDir(), `${id}.yml`);
+  if (!existsSync(path) && !existsSync(alt)) {
+    return { ok: false, error: 'Built-in profiles cannot be deleted — they can only be overridden.' };
+  }
+  rmSync(existsSync(path) ? path : alt);
+  broadcastChange();
+  if (!getProfile(settings().get().activeProfile)) {
+    const first = listProfiles()[0];
+    if (first) settings().set({ activeProfile: first.id });
+  }
+  return { ok: true };
 }
 
 export function openProfilesFolder(): void {

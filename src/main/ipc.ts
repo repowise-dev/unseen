@@ -5,9 +5,13 @@ import { settings } from './services/settings';
 import { setSecret, secretsStatus } from './services/secrets';
 import {
   listProfiles,
+  getProfile,
   getActiveProfile,
+  saveProfile,
+  deleteProfile,
   openProfilesFolder,
 } from './services/profiles';
+import { importKnowledgeFiles } from './services/knowledge';
 import { getLlmProvider, listLlmProviders, providerContext } from './services/llm/registry';
 import { runAnswer, cancelAnswer } from './services/llm/run-answer';
 import { getSttProvider, listSttProviders } from './services/stt/registry';
@@ -25,7 +29,11 @@ export function registerIpc(): void {
   ipcMain.handle(IPC.secretsStatus, () => secretsStatus());
 
   ipcMain.handle(IPC.profilesList, () => listProfiles());
+  ipcMain.handle(IPC.profilesGet, (_e, id: string) => getProfile(id));
   ipcMain.handle(IPC.profilesGetActive, () => getActiveProfile());
+  ipcMain.handle(IPC.profilesSave, (_e, profile: unknown) => saveProfile(profile));
+  ipcMain.handle(IPC.profilesDelete, (_e, id: string) => deleteProfile(id));
+  ipcMain.handle(IPC.knowledgeImport, () => importKnowledgeFiles());
   ipcMain.handle(IPC.profilesSetActive, (_e, id: string) => {
     settings().set({ activeProfile: id });
     return getActiveProfile();
