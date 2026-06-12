@@ -37,7 +37,12 @@ export interface Settings {
     windowChars: number;
     retentionMin: number;
   };
+  sessions: {
+    autoSave: boolean;
+  };
   activeProfile: string;
+  /** First-run wizard completed. */
+  onboarded: boolean;
 }
 
 export type DeepPartial<T> = {
@@ -169,4 +174,26 @@ export interface ProfileSummary {
 export interface AppInfo {
   version: string;
   platform: string;
+}
+
+// ---- Sessions ----
+
+export type SessionEvent =
+  | { t: number; type: 'start'; version: string }
+  | { t: number; type: 'final'; text: string; speaker: number }
+  | {
+      t: number;
+      type: 'answer';
+      text: string;
+      profileId: string;
+      forced: boolean;
+      usage?: Usage | null;
+    };
+
+export interface SessionMeta {
+  id: string; // filename without extension
+  startedAt: number;
+  endedAt: number;
+  finals: number;
+  answers: number;
 }

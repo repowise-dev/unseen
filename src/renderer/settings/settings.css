@@ -109,3 +109,29 @@ kbd {
   font-family: inherit;
 }
 table.hotkeys td { padding: 4px 12px 4px 0; color: #9a9aa4; font-size: 12px; }
+
+.wizard {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.wizard-card {
+  width: 520px;
+  max-height: 100%;
+  overflow-y: auto;
+  background: #1d1d23;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 28px 32px;
+}
+.wizard-card p { color: #b8b8c0; font-size: 13px; line-height: 1.5; margin-top: 8px; }
+.wizard-steps { display: flex; gap: 6px; margin-bottom: 18px; }
+.wizard-dot {
+  width: 26px; height: 4px; border-radius: 2px;
+  background: rgba(255,255,255,0.1);
+}
+.wizard-dot.on { background: #60a5fa; }
+.wizard-nav { margin-top: 20px; }
+button.btn:disabled { opacity: 0.4; cursor: default; }

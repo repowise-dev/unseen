@@ -36,7 +36,11 @@ export const DEFAULT_SETTINGS: Settings = {
     windowChars: 4000,
     retentionMin: 3,
   },
+  sessions: {
+    autoSave: true,
+  },
   activeProfile: 'qa-overlay',
+  onboarded: false,
 };
 
 /** Max bytes of a single knowledge file injected into the prompt. */

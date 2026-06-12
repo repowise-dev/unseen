@@ -12,6 +12,13 @@ import {
   openProfilesFolder,
 } from './services/profiles';
 import { importKnowledgeFiles } from './services/knowledge';
+import {
+  recordEvent,
+  listSessions,
+  exportSession,
+  deleteSession,
+  openSessionsFolder,
+} from './services/sessions';
 import { getLlmProvider, listLlmProviders, providerContext } from './services/llm/registry';
 import { runAnswer, cancelAnswer } from './services/llm/run-answer';
 import { getSttProvider, listSttProviders } from './services/stt/registry';
@@ -73,4 +80,13 @@ export function registerIpc(): void {
 
   ipcMain.handle(IPC.appInfo, () => ({ version: app.getVersion(), platform: process.platform }));
   ipcMain.handle(IPC.quit, () => app.quit());
+
+  // Sessions: transcript finals arrive fire-and-forget from the overlay.
+  ipcMain.on(IPC.sessionFinal, (_e, ev: { text: string; speaker: number }) => {
+    recordEvent({ t: Date.now(), type: 'final', text: ev.text, speaker: ev.speaker });
+  });
+  ipcMain.handle(IPC.sessionsList, () => listSessions());
+  ipcMain.handle(IPC.sessionsExport, (_e, id: string) => exportSession(id));
+  ipcMain.handle(IPC.sessionsDelete, (_e, id: string) => deleteSession(id));
+  ipcMain.handle(IPC.sessionsOpenFolder, () => openSessionsFolder());
 }

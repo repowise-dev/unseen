@@ -6,6 +6,7 @@ import { createOverlay } from './windows/overlay';
 import { openSettingsWindow } from './windows/settings';
 import { initProfiles, disposeProfiles } from './services/profiles';
 import { getSecret } from './services/secrets';
+import { settings } from './services/settings';
 
 app.whenReady().then(() => {
   initProfiles();
@@ -13,8 +14,9 @@ app.whenReady().then(() => {
   createOverlay();
   registerShortcuts();
 
-  // First run (or missing transcription key): take the user straight to setup.
-  if (!getSecret('deepgram')) openSettingsWindow();
+  // First run (wizard not completed) or missing transcription key:
+  // take the user straight to setup.
+  if (!settings().get().onboarded || !getSecret('deepgram')) openSettingsWindow();
 
   // macOS dock click with no windows → recreate the overlay.
   app.on('activate', () => {

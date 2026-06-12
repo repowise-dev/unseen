@@ -205,6 +205,7 @@ export async function initController(): Promise<void> {
         return;
       }
       transcript.addFinal({ t: Date.now(), text: event.text, speaker: event.speaker });
+      window.sotto.sessionRecordFinal({ text: event.text, speaker: event.speaker });
       pushTranscript();
       void maybeAnswer();
     },

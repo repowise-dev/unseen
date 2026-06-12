@@ -9,6 +9,7 @@ import type {
   Profile,
   ProfileSummary,
   ProviderInfo,
+  SessionMeta,
   Settings,
   SttDescriptor,
   VerifyResult,
@@ -52,6 +53,14 @@ const api = {
   setPrivacyMode: (on: boolean): Promise<void> => ipcRenderer.invoke(IPC.setPrivacyMode, on),
   appInfo: (): Promise<AppInfo> => ipcRenderer.invoke(IPC.appInfo),
   quit: (): Promise<void> => ipcRenderer.invoke(IPC.quit),
+
+  sessionRecordFinal: (ev: { text: string; speaker: number }): void =>
+    ipcRenderer.send(IPC.sessionFinal, ev),
+  sessionsList: (): Promise<SessionMeta[]> => ipcRenderer.invoke(IPC.sessionsList),
+  sessionsExport: (id: string): Promise<{ ok: boolean; path?: string }> =>
+    ipcRenderer.invoke(IPC.sessionsExport, id),
+  sessionsDelete: (id: string): Promise<void> => ipcRenderer.invoke(IPC.sessionsDelete, id),
+  sessionsOpenFolder: (): Promise<void> => ipcRenderer.invoke(IPC.sessionsOpenFolder),
 
   onAnswerDelta: (cb: (text: string) => void) =>
     ipcRenderer.on(IPC.evAnswerDelta, (_e, t: string) => cb(t)),

@@ -26,6 +26,13 @@ export const IPC = {
   appInfo: 'app:info',
   quit: 'app:quit',
 
+  // sessions
+  sessionFinal: 'session:final', // fire-and-forget (ipcRenderer.send)
+  sessionsList: 'sessions:list',
+  sessionsExport: 'sessions:export',
+  sessionsDelete: 'sessions:delete',
+  sessionsOpenFolder: 'sessions:open-folder',
+
   // events (main → renderer)
   evAnswerDelta: 'answer:delta',
   evAnswerDone: 'answer:done',

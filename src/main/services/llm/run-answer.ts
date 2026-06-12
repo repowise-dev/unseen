@@ -8,6 +8,7 @@ import { loadKnowledge } from '../knowledge';
 import { buildAnswerRequest } from '../prompt-builder';
 import { getLlmProvider, providerContext } from './registry';
 import { estimateCost } from './prices';
+import { recordEvent } from '../sessions';
 
 // One answer in flight at a time: starting a new one aborts the previous.
 let current: AbortController | null = null;
@@ -53,6 +54,7 @@ export async function runAnswer(sender: WebContents, payload: AnswerPayload): Pr
     if (controller.signal.aborted) return;
     let firstDeltaSent = false;
     let usage: Usage | null = null;
+    let answerText = '';
 
     // Stall watchdog: abort if the stream goes silent.
     let lastEventAt = Date.now();
@@ -72,6 +74,7 @@ export async function runAnswer(sender: WebContents, payload: AnswerPayload): Pr
         lastEventAt = Date.now();
         if (event.type === 'delta') {
           firstDeltaSent = true;
+          answerText += event.text;
           sender.send(IPC.evAnswerDelta, event.text);
         } else if (event.type === 'usage') {
           usage = {
@@ -88,6 +91,16 @@ export async function runAnswer(sender: WebContents, payload: AnswerPayload): Pr
         }
       }
       sender.send(IPC.evAnswerDone, { usage });
+      if (answerText.trim() && answerText.trim().toUpperCase() !== 'SKIP') {
+        recordEvent({
+          t: Date.now(),
+          type: 'answer',
+          text: answerText.trim(),
+          profileId: profile.id,
+          forced: payload.forced,
+          usage,
+        });
+      }
       return;
     } catch (err) {
       if (controller.signal.aborted && !firstDeltaSent) return; // superseded or cancelled
