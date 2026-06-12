@@ -30,7 +30,13 @@ Behavior is driven by **profiles** — plain YAML files that define the prompt, 
 
 Adding your own use case = writing one YAML file. No code.
 
-## Install (development)
+## Install
+
+**Download an installer** from [Releases](https://github.com/repowise-dev/unseen/releases) — dmg (macOS), exe (Windows), AppImage/deb (Linux).
+
+> Builds are not yet code-signed: on macOS right-click the app → **Open** the first time; on Windows click "More info → Run anyway" in SmartScreen.
+
+**Or run from source:**
 
 ```bash
 git clone https://github.com/repowise-dev/unseen && cd unseen
@@ -38,12 +44,13 @@ npm install
 npm run dev
 ```
 
+`npm run dist` builds the installer for your platform into `release/`.
+
 First run: open Settings (⚙ in the overlay) → Providers → pick your LLM, paste keys (stored in your OS keychain), Test, done. You need:
 
 - a **Deepgram** API key for transcription (generous free tier), and
 - an LLM: an **Anthropic / OpenAI / Gemini** key — or **no key at all** with [Ollama](https://ollama.com) running locally.
 
-Packaged installers (dmg / exe / AppImage) land with v0.1.0.
 
 ## Hotkeys
 
