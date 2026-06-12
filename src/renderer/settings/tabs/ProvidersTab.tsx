@@ -28,7 +28,7 @@ function KeyField({
           className="btn"
           disabled={!value}
           onClick={async () => {
-            onSaved(await window.sotto.secretsSet(providerId, value));
+            onSaved(await window.unseen.secretsSet(providerId, value));
             setValue('');
           }}
         >
@@ -54,14 +54,14 @@ export function ProvidersTab({ settings, update }: TabProps): React.JSX.Element 
   const llmProvider = providers.llm.find((p) => p.id === llmId);
 
   useEffect(() => {
-    void window.sotto.providersList().then(setProviders);
-    void window.sotto.secretsStatus().then(setKeyStatus);
+    void window.unseen.providersList().then(setProviders);
+    void window.unseen.secretsStatus().then(setKeyStatus);
   }, []);
 
   useEffect(() => {
     setVerify(null);
     setModels([]);
-    void window.sotto.modelsList(llmId).then(setModels);
+    void window.unseen.modelsList(llmId).then(setModels);
   }, [llmId, keyStatus]);
 
   const set = update;
@@ -126,7 +126,7 @@ export function ProvidersTab({ settings, update }: TabProps): React.JSX.Element 
           />
           <button
             className="btn secondary"
-            onClick={() => void window.sotto.modelsList(llmId).then(setModels)}
+            onClick={() => void window.unseen.modelsList(llmId).then(setModels)}
           >
             ↻
           </button>
@@ -143,7 +143,7 @@ export function ProvidersTab({ settings, update }: TabProps): React.JSX.Element 
       <div className="field">
         <button
           className="btn"
-          onClick={async () => setVerify(await window.sotto.providerVerify('llm', llmId))}
+          onClick={async () => setVerify(await window.unseen.providerVerify('llm', llmId))}
         >
           Test connection
         </button>
@@ -177,7 +177,7 @@ export function ProvidersTab({ settings, update }: TabProps): React.JSX.Element 
         <button
           className="btn"
           onClick={async () =>
-            setSttVerify(await window.sotto.providerVerify('stt', settings.stt.provider))
+            setSttVerify(await window.unseen.providerVerify('stt', settings.stt.provider))
           }
         >
           Test connection

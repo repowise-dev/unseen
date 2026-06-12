@@ -76,6 +76,6 @@ const api = {
     ipcRenderer.on(IPC.evProfilesChanged, (_e, p: ProfileSummary[]) => cb(p)),
 };
 
-export type SottoApi = typeof api;
+export type UnseenApi = typeof api;
 
-contextBridge.exposeInMainWorld('sotto', api);
+contextBridge.exposeInMainWorld('unseen', api);

@@ -33,7 +33,7 @@
 - **Renderer (overlay)** owns audio capture (getUserMedia must run there), the
   transcript model, trigger evaluation, and rendering. It receives a
   *connection descriptor* for STT (URL + ephemeral token) — never stored keys.
-- **Preload** exposes the typed `window.sotto` API; channel names live in
+- **Preload** exposes the typed `window.unseen` API; channel names live in
   `src/shared/ipc-contract.ts` so main and preload can't drift.
 
 ## Key flows

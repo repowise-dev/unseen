@@ -36,7 +36,7 @@ async function maybeAnswer(opts: { force?: boolean; codeMode?: boolean } = {}): 
   if (inFlight) {
     if (force) {
       // Ask Now always forces through: abandon the previous answer.
-      await window.sotto.answerCancel();
+      await window.unseen.answerCancel();
       if (currentAnswerId !== null) {
         store().finishAnswer(currentAnswerId, { discard: true });
         currentAnswerId = null;
@@ -82,7 +82,7 @@ async function maybeAnswer(opts: { force?: boolean; codeMode?: boolean } = {}): 
   store().beginAnswer(currentAnswerId);
 
   try {
-    await window.sotto.answerStart({
+    await window.unseen.answerStart({
       fullTranscript,
       newSegment,
       forced: force,
@@ -135,9 +135,9 @@ export async function initController(): Promise<void> {
   const s = useOverlayStore.getState();
 
   const [settings, profiles, active] = await Promise.all([
-    window.sotto.settingsGet(),
-    window.sotto.profilesList(),
-    window.sotto.profilesGetActive(),
+    window.unseen.settingsGet(),
+    window.unseen.profilesList(),
+    window.unseen.profilesGetActive(),
   ]);
   s.setSettings(settings);
   s.setProfiles(profiles);
@@ -148,9 +148,9 @@ export async function initController(): Promise<void> {
   });
 
   let lastSttConfig = JSON.stringify(settings.stt);
-  window.sotto.onSettingsChanged(async (next) => {
+  window.unseen.onSettingsChanged(async (next) => {
     store().setSettings(next);
-    const profile = await window.sotto.profilesGetActive();
+    const profile = await window.unseen.profilesGetActive();
     store().setActiveProfile(profile);
     transcript.configure({
       windowChars: profile.transcript?.window_chars ?? next.transcript.windowChars,
@@ -164,20 +164,20 @@ export async function initController(): Promise<void> {
       await client?.start();
     }
   });
-  window.sotto.onProfilesChanged((list) => store().setProfiles(list));
+  window.unseen.onProfilesChanged((list) => store().setProfiles(list));
 
-  window.sotto.onAnswerDelta((delta) => {
+  window.unseen.onAnswerDelta((delta) => {
     if (currentAnswerId !== null) store().appendAnswer(currentAnswerId, delta);
   });
-  window.sotto.onAnswerDone(({ usage }) => settleAnswer({ usage }));
-  window.sotto.onAnswerError((err) => settleAnswer({ error: err }));
-  window.sotto.onForceAnswer(() => askNow());
-  window.sotto.onTogglePause(() => {
+  window.unseen.onAnswerDone(({ usage }) => settleAnswer({ usage }));
+  window.unseen.onAnswerError((err) => settleAnswer({ error: err }));
+  window.unseen.onForceAnswer(() => askNow());
+  window.unseen.onTogglePause(() => {
     togglePause();
   });
 
   client = new SttClient({
-    getDescriptor: () => window.sotto.sttDescriptor(),
+    getDescriptor: () => window.unseen.sttDescriptor(),
     getMicDeviceId: () => store().settings?.stt.micDeviceId ?? 'default',
     onStatus: (status) => {
       switch (status.state) {
@@ -205,7 +205,7 @@ export async function initController(): Promise<void> {
         return;
       }
       transcript.addFinal({ t: Date.now(), text: event.text, speaker: event.speaker });
-      window.sotto.sessionRecordFinal({ text: event.text, speaker: event.speaker });
+      window.unseen.sessionRecordFinal({ text: event.text, speaker: event.speaker });
       pushTranscript();
       void maybeAnswer();
     },

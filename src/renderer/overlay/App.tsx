@@ -18,7 +18,7 @@ export function App(): React.JSX.Element {
   const fontSize = settings?.overlay.fontSize ?? 13;
 
   const onProfileChange = async (id: string): Promise<void> => {
-    const profile = await window.sotto.profilesSetActive(id);
+    const profile = await window.unseen.profilesSetActive(id);
     setActiveProfile(profile);
   };
 
@@ -49,7 +49,7 @@ export function App(): React.JSX.Element {
                 ? 'Privacy Mode ON — this window is hidden from screen capture'
                 : 'Privacy Mode OFF — this window is visible in screen shares'
             }
-            onClick={() => void window.sotto.setPrivacyMode(!privacyOn)}
+            onClick={() => void window.unseen.setPrivacyMode(!privacyOn)}
           >
             {privacyOn ? '🙈' : '👁'}
           </button>
@@ -66,14 +66,14 @@ export function App(): React.JSX.Element {
           <button
             className="ghost-btn"
             title="Settings"
-            onClick={() => void window.sotto.openSettings()}
+            onClick={() => void window.unseen.openSettings()}
           >
             ⚙
           </button>
           <button
             className="ghost-btn"
-            title="Quit Sotto"
-            onClick={() => void window.sotto.quit()}
+            title="Quit Unseen"
+            onClick={() => void window.unseen.quit()}
           >
             ✕
           </button>

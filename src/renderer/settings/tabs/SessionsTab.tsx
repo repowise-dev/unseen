@@ -21,7 +21,7 @@ export function SessionsTab({ settings, update }: TabProps): React.JSX.Element {
   const [exported, setExported] = useState<string | null>(null);
 
   const refresh = (): void => {
-    void window.sotto.sessionsList().then(setSessions);
+    void window.unseen.sessionsList().then(setSessions);
   };
   useEffect(refresh, []);
 
@@ -60,7 +60,7 @@ export function SessionsTab({ settings, update }: TabProps): React.JSX.Element {
             <button
               className="btn secondary"
               onClick={async () => {
-                const res = await window.sotto.sessionsExport(s.id);
+                const res = await window.unseen.sessionsExport(s.id);
                 if (res.ok && res.path) setExported(res.path);
               }}
             >
@@ -69,7 +69,7 @@ export function SessionsTab({ settings, update }: TabProps): React.JSX.Element {
             <button
               className="btn secondary"
               onClick={async () => {
-                await window.sotto.sessionsDelete(s.id);
+                await window.unseen.sessionsDelete(s.id);
                 refresh();
               }}
             >
@@ -80,7 +80,7 @@ export function SessionsTab({ settings, update }: TabProps): React.JSX.Element {
       )}
 
       <div className="row" style={{ marginTop: 12 }}>
-        <button className="btn secondary" onClick={() => void window.sotto.sessionsOpenFolder()}>
+        <button className="btn secondary" onClick={() => void window.unseen.sessionsOpenFolder()}>
           Open sessions folder…
         </button>
         <button className="btn secondary" onClick={refresh}>

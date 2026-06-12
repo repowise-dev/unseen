@@ -15,8 +15,8 @@ export function Wizard({ settings, update }: TabProps): React.JSX.Element {
   const [micState, setMicState] = useState<'untested' | 'ok' | 'denied'>('untested');
 
   useEffect(() => {
-    void window.sotto.providersList().then((p) => setProviders(p.llm));
-    void window.sotto.profilesList().then(setProfiles);
+    void window.unseen.providersList().then((p) => setProviders(p.llm));
+    void window.unseen.profilesList().then(setProfiles);
   }, []);
 
   const llmId = settings.llm.provider;
@@ -50,9 +50,9 @@ export function Wizard({ settings, update }: TabProps): React.JSX.Element {
 
         {step === 'welcome' && (
           <>
-            <h2>Welcome to Sotto 👋</h2>
+            <h2>Welcome to Unseen 👋</h2>
             <p>
-              Sotto listens to your conversations, transcribes them live, and surfaces answers and
+              Unseen listens to your conversations, transcribes them live, and surfaces answers and
               notes in a floating panel. Setup takes about a minute: a transcription key, an AI
               provider, and a profile.
             </p>
@@ -72,7 +72,7 @@ export function Wizard({ settings, update }: TabProps): React.JSX.Element {
           <>
             <h2>1 · Transcription</h2>
             <p className="hint">
-              Sotto uses Deepgram for live speech-to-text (generous free tier). Grab a key at{' '}
+              Unseen uses Deepgram for live speech-to-text (generous free tier). Grab a key at{' '}
               <b>console.deepgram.com</b> → API Keys.
             </p>
             <div className="field" style={{ marginTop: 12 }}>
@@ -88,8 +88,8 @@ export function Wizard({ settings, update }: TabProps): React.JSX.Element {
                   className="btn"
                   disabled={!dgKey}
                   onClick={async () => {
-                    await window.sotto.secretsSet('deepgram', dgKey);
-                    setVerify(await window.sotto.providerVerify('stt', 'deepgram'));
+                    await window.unseen.secretsSet('deepgram', dgKey);
+                    setVerify(await window.unseen.providerVerify('stt', 'deepgram'));
                   }}
                 >
                   Save & test
@@ -144,9 +144,9 @@ export function Wizard({ settings, update }: TabProps): React.JSX.Element {
                     className="btn secondary"
                     disabled={!llmKey}
                     onClick={async () => {
-                      await window.sotto.secretsSet(llmId, llmKey);
+                      await window.unseen.secretsSet(llmId, llmKey);
                       setLlmKey('');
-                      setVerify(await window.sotto.providerVerify('llm', llmId));
+                      setVerify(await window.unseen.providerVerify('llm', llmId));
                     }}
                   >
                     Save
@@ -157,7 +157,7 @@ export function Wizard({ settings, update }: TabProps): React.JSX.Element {
             <div className="field">
               <button
                 className="btn"
-                onClick={async () => setVerify(await window.sotto.providerVerify('llm', llmId))}
+                onClick={async () => setVerify(await window.unseen.providerVerify('llm', llmId))}
               >
                 Test connection
               </button>
@@ -220,7 +220,7 @@ export function Wizard({ settings, update }: TabProps): React.JSX.Element {
               shares.
             </p>
             <div className="row wizard-nav">
-              <button className="btn" onClick={finish}>Start using Sotto</button>
+              <button className="btn" onClick={finish}>Start using Unseen</button>
             </div>
           </>
         )}

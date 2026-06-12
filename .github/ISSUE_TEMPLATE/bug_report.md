@@ -12,6 +12,6 @@ labels: bug
 
 **Environment**
 - OS:
-- Sotto version:
+- Unseen version:
 - LLM provider/model:
 - STT provider:

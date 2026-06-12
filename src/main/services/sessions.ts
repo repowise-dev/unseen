@@ -82,7 +82,7 @@ export async function exportSession(id: string): Promise<{ ok: boolean; path?: s
   const md = sessionToMarkdown(readSession(id));
   const res = await dialog.showSaveDialog({
     title: 'Export session as Markdown',
-    defaultPath: join(app.getPath('documents'), `sotto-session-${id}.md`),
+    defaultPath: join(app.getPath('documents'), `unseen-session-${id}.md`),
     filters: [{ name: 'Markdown', extensions: ['md'] }],
   });
   if (res.canceled || !res.filePath) return { ok: false };

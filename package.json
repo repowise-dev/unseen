@@ -1,14 +1,14 @@
 {
-  "name": "sotto",
+  "name": "unseen",
   "version": "0.1.0",
   "description": "Open-source real-time meeting copilot — listens, transcribes, and assists live, with swappable LLM/STT providers and profile-driven behavior.",
   "license": "MIT",
   "private": true,
   "main": "out/main/index.js",
-  "homepage": "https://github.com/repowise-dev/sotto",
+  "homepage": "https://github.com/repowise-dev/unseen",
   "repository": {
     "type": "git",
-    "url": "https://github.com/repowise-dev/sotto.git"
+    "url": "https://github.com/repowise-dev/unseen.git"
   },
   "scripts": {
     "dev": "electron-vite dev",

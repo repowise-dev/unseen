@@ -5,7 +5,7 @@ export function AboutTab({ settings }: { settings: Settings }): React.JSX.Elemen
   const [info, setInfo] = useState<AppInfo | null>(null);
 
   useEffect(() => {
-    void window.sotto.appInfo().then(setInfo);
+    void window.unseen.appInfo().then(setInfo);
   }, []);
 
   const hk = settings.hotkeys;
@@ -14,11 +14,11 @@ export function AboutTab({ settings }: { settings: Settings }): React.JSX.Elemen
 
   return (
     <div className="about">
-      <h2>Sotto {info ? `v${info.version}` : ''}</h2>
+      <h2>Unseen {info ? `v${info.version}` : ''}</h2>
       <p>Open-source real-time meeting copilot.</p>
       <p>
-        <a href="https://github.com/repowise-dev/sotto" target="_blank" rel="noreferrer">
-          github.com/repowise-dev/sotto
+        <a href="https://github.com/repowise-dev/unseen" target="_blank" rel="noreferrer">
+          github.com/repowise-dev/unseen
         </a>
       </p>
 

@@ -47,7 +47,7 @@ export function ProfileEditor({
   };
 
   const attachFiles = async (): Promise<void> => {
-    const names = await window.sotto.knowledgeImport();
+    const names = await window.unseen.knowledgeImport();
     if (names.length) {
       setP({
         ...p,
@@ -75,13 +75,13 @@ export function ProfileEditor({
           .filter(Boolean),
       },
     };
-    const res = await window.sotto.profilesSave(profile);
+    const res = await window.unseen.profilesSave(profile);
     if (!res.ok) setError(res.error ?? 'Unknown error');
     else onClose();
   };
 
   const remove = async (): Promise<void> => {
-    const res = await window.sotto.profilesDelete(p.id);
+    const res = await window.unseen.profilesDelete(p.id);
     if (!res.ok) setError(res.error ?? 'Unknown error');
     else onClose();
   };

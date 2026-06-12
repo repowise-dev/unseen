@@ -1,10 +1,10 @@
-# Sotto
+# Unseen
 
-**An open-source, on-screen AI copilot for live conversations.** Sotto listens to your meeting, transcribes it in real time, and surfaces answers, notes, and talking points in a floating panel — one that (optionally) never shows up in your screen share.
+**An open-source, on-screen AI copilot for live conversations.** Unseen listens to your meeting, transcribes it in real time, and surfaces answers, notes, and talking points in a floating panel — one that (optionally) never shows up in your screen share.
 
 Bring your own AI: **Anthropic Claude, OpenAI, Google Gemini, Ollama (fully local), or any OpenAI-compatible endpoint** (LM Studio, Groq, OpenRouter, vLLM, …).
 
-> *sotto voce* — "under the voice": said quietly, so only the right person hears it.
+> The copilot only you can see — your notes, answers, and prompts stay out of your screen share and on your machine.
 
 ## What it does
 
@@ -33,7 +33,7 @@ Adding your own use case = writing one YAML file. No code.
 ## Install (development)
 
 ```bash
-git clone https://github.com/repowise-dev/sotto && cd sotto
+git clone https://github.com/repowise-dev/unseen && cd unseen
 npm install
 npm run dev
 ```

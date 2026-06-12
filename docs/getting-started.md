@@ -3,7 +3,7 @@
 ## Run from source
 
 ```bash
-git clone https://github.com/repowise-dev/sotto && cd sotto
+git clone https://github.com/repowise-dev/unseen && cd unseen
 npm install
 npm run dev
 ```

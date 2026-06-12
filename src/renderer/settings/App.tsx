@@ -23,18 +23,18 @@ export function App(): React.JSX.Element {
   const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
-    window.sotto
+    window.unseen
       .settingsGet()
       .then(setSettings)
       .catch((err) => setLoadError(String(err)));
     // Sync changes made elsewhere (overlay toggles, hotkeys, other windows).
-    window.sotto.onSettingsChanged(setSettings);
+    window.unseen.onSettingsChanged(setSettings);
   }, []);
 
   const update = useCallback((patch: DeepPartial<Settings>): void => {
     // Optimistic: the UI must never wait on the IPC round trip.
     setSettings((prev) => (prev ? deepMerge(prev, patch) : prev));
-    void window.sotto.settingsSet(patch);
+    void window.unseen.settingsSet(patch);
   }, []);
 
   if (loadError) {

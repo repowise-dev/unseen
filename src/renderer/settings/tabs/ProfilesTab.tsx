@@ -32,17 +32,17 @@ export function ProfilesTab({ settings, update }: TabProps): React.JSX.Element {
   const [editing, setEditing] = useState<{ profile: Profile; isNew: boolean } | null>(null);
 
   useEffect(() => {
-    void window.sotto.profilesList().then(setProfiles);
-    window.sotto.onProfilesChanged(setProfiles);
+    void window.unseen.profilesList().then(setProfiles);
+    window.unseen.onProfilesChanged(setProfiles);
   }, []);
 
   const edit = async (id: string): Promise<void> => {
-    const profile = await window.sotto.profilesGet(id);
+    const profile = await window.unseen.profilesGet(id);
     if (profile) setEditing({ profile, isNew: false });
   };
 
   const duplicate = async (id: string): Promise<void> => {
-    const profile = await window.sotto.profilesGet(id);
+    const profile = await window.unseen.profilesGet(id);
     if (profile) {
       setEditing({
         profile: { ...profile, id: `${profile.id}-copy`, name: `${profile.name} (copy)` },
@@ -112,7 +112,7 @@ export function ProfilesTab({ settings, update }: TabProps): React.JSX.Element {
         >
           + New profile
         </button>
-        <button className="btn secondary" onClick={() => void window.sotto.profilesOpenFolder()}>
+        <button className="btn secondary" onClick={() => void window.unseen.profilesOpenFolder()}>
           Open profiles folder…
         </button>
       </div>

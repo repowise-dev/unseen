@@ -1,8 +1,8 @@
-import type { SottoApi } from '../preload/index';
+import type { UnseenApi } from '../preload/index';
 
 declare global {
   interface Window {
-    sotto: SottoApi;
+    unseen: UnseenApi;
   }
 }
 

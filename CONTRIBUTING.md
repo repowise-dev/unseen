@@ -1,4 +1,4 @@
-# Contributing to Sotto
+# Contributing to Unseen
 
 Thanks for helping! The codebase is deliberately modular — most contributions
 touch exactly one file plus a registry entry.
@@ -27,7 +27,7 @@ src/main/               Electron main: windows, IPC, hotkeys
 src/main/services/llm/  LLM providers (anthropic, openai, gemini, ollama, openai-compatible)
 src/main/services/stt/  STT providers (connection descriptors; keys stay in main)
 src/main/services/      profiles, prompt-builder, knowledge, settings, secrets
-src/preload/            typed contextBridge API (window.sotto)
+src/preload/            typed contextBridge API (window.unseen)
 src/renderer/overlay/   the floating copilot: transcript store, trigger engine,
                         STT client (reconnect machine), React UI
 src/renderer/settings/  settings window
