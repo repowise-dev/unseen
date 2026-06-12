@@ -147,10 +147,22 @@ export async function initController(): Promise<void> {
     retentionMin: active.transcript?.retention_min ?? settings.transcript.retentionMin,
   });
 
+  let lastSttConfig = JSON.stringify(settings.stt);
   window.sotto.onSettingsChanged(async (next) => {
     store().setSettings(next);
     const profile = await window.sotto.profilesGetActive();
     store().setActiveProfile(profile);
+    transcript.configure({
+      windowChars: profile.transcript?.window_chars ?? next.transcript.windowChars,
+      retentionMin: profile.transcript?.retention_min ?? next.transcript.retentionMin,
+    });
+    // Mic device, language, diarization, or STT provider changed → reconnect.
+    const sttConfig = JSON.stringify(next.stt);
+    if (sttConfig !== lastSttConfig) {
+      lastSttConfig = sttConfig;
+      client?.stop();
+      await client?.start();
+    }
   });
   window.sotto.onProfilesChanged((list) => store().setProfiles(list));
 

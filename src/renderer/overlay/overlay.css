@@ -124,6 +124,7 @@ select.profile-picker {
 .answer-item .copy-btn { visibility: hidden; }
 .answer-item:hover .copy-btn { visibility: visible; }
 .answer-item .err { color: #f87171; }
+.empty-hint { color: #555; font-style: italic; font-size: 12px; padding-top: 4px; }
 
 footer {
   padding: 6px 12px;

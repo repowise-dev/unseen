@@ -1,23 +1,10 @@
 import { app, webContents } from 'electron';
-import { join } from 'path';
-import { readFileSync, writeFileSync, renameSync, existsSync } from 'fs';
+import { join, dirname } from 'path';
+import { readFileSync, writeFileSync, renameSync, existsSync, mkdirSync } from 'fs';
 import type { DeepPartial, Settings } from '../../shared/types';
 import { DEFAULT_SETTINGS } from '../../shared/constants';
+import { deepMerge } from '../../shared/merge';
 import { IPC } from '../../shared/ipc-contract';
-
-function isObject(v: unknown): v is Record<string, unknown> {
-  return typeof v === 'object' && v !== null && !Array.isArray(v);
-}
-
-function deepMerge<T>(base: T, patch: DeepPartial<T> | undefined): T {
-  if (patch === undefined) return base;
-  if (!isObject(base) || !isObject(patch)) return patch as T;
-  const out: Record<string, unknown> = { ...base };
-  for (const [k, v] of Object.entries(patch)) {
-    out[k] = k in base ? deepMerge((base as Record<string, unknown>)[k], v as never) : v;
-  }
-  return out as T;
-}
 
 class SettingsStore {
   private path = join(app.getPath('userData'), 'settings.json');
@@ -43,6 +30,7 @@ class SettingsStore {
 
   set(patch: DeepPartial<Settings>): Settings {
     this.cache = deepMerge(this.cache, patch);
+    mkdirSync(dirname(this.path), { recursive: true });
     const tmp = this.path + '.tmp';
     writeFileSync(tmp, JSON.stringify(this.cache, null, 2));
     renameSync(tmp, this.path);

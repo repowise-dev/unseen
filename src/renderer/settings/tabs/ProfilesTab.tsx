@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import type { ProfileSummary, Settings } from '../../../shared/types';
+import type { ProfileSummary } from '../../../shared/types';
+import type { TabProps } from '../App';
 
-export function ProfilesTab({ settings }: { settings: Settings }): React.JSX.Element {
+export function ProfilesTab({ settings, update }: TabProps): React.JSX.Element {
   const [profiles, setProfiles] = useState<ProfileSummary[]>([]);
 
   useEffect(() => {
@@ -21,7 +22,7 @@ export function ProfilesTab({ settings }: { settings: Settings }): React.JSX.Ele
         <div
           key={p.id}
           className={`profile-card ${p.id === settings.activeProfile ? 'active' : ''}`}
-          onClick={() => void window.sotto.profilesSetActive(p.id)}
+          onClick={() => update({ activeProfile: p.id })}
         >
           <span className="icon">{p.icon}</span>
           <div>

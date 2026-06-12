@@ -20,6 +20,7 @@ export const IPC = {
   openSettings: 'window:open-settings',
   setPrivacyMode: 'overlay:set-privacy',
   appInfo: 'app:info',
+  quit: 'app:quit',
 
   // events (main → renderer)
   evAnswerDelta: 'answer:delta',

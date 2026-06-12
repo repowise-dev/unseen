@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import type { Settings } from '../../../shared/types';
+import type { TabProps } from '../App';
 
-export function AudioTab({ settings }: { settings: Settings }): React.JSX.Element {
+export function AudioTab({ settings, update }: TabProps): React.JSX.Element {
   const [mics, setMics] = useState<MediaDeviceInfo[]>([]);
 
   useEffect(() => {
@@ -12,9 +12,7 @@ export function AudioTab({ settings }: { settings: Settings }): React.JSX.Elemen
       .then((all) => setMics(all.filter((d) => d.kind === 'audioinput')));
   }, []);
 
-  const set = (patch: Parameters<typeof window.sotto.settingsSet>[0]): void => {
-    void window.sotto.settingsSet(patch);
-  };
+  const set = update;
 
   return (
     <div>

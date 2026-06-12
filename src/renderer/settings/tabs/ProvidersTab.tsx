@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import type { ModelInfo, ProviderInfo, Settings, VerifyResult } from '../../../shared/types';
+import type { ModelInfo, ProviderInfo, VerifyResult } from '../../../shared/types';
+import type { TabProps } from '../App';
 
 function KeyField({
   providerId,
@@ -39,7 +40,7 @@ function KeyField({
   );
 }
 
-export function ProvidersTab({ settings }: { settings: Settings }): React.JSX.Element {
+export function ProvidersTab({ settings, update }: TabProps): React.JSX.Element {
   const [providers, setProviders] = useState<{ llm: ProviderInfo[]; stt: ProviderInfo[] }>({
     llm: [],
     stt: [],
@@ -63,9 +64,7 @@ export function ProvidersTab({ settings }: { settings: Settings }): React.JSX.El
     void window.sotto.modelsList(llmId).then(setModels);
   }, [llmId, keyStatus]);
 
-  const set = (patch: Parameters<typeof window.sotto.settingsSet>[0]): void => {
-    void window.sotto.settingsSet(patch);
-  };
+  const set = update;
 
   return (
     <div>

@@ -31,6 +31,12 @@ export function AnswerFeed(): React.JSX.Element {
         ref={ref}
         onScroll={(e) => setShowScrollBtn(!isAtBottom(e.currentTarget))}
       >
+        {answers.length === 0 && (
+          <div className="empty-hint">
+            Answers appear here when a question is detected — or hit “Ask now” to answer the
+            latest thing said.
+          </div>
+        )}
         {answers.map((a) => (
           <div className="answer-item" key={a.id}>
             <div className="meta">

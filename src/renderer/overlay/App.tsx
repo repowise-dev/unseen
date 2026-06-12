@@ -70,6 +70,13 @@ export function App(): React.JSX.Element {
           >
             ⚙
           </button>
+          <button
+            className="ghost-btn"
+            title="Quit Sotto"
+            onClick={() => void window.sotto.quit()}
+          >
+            ✕
+          </button>
         </div>
       </header>
 

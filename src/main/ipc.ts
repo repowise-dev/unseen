@@ -64,4 +64,5 @@ export function registerIpc(): void {
   ipcMain.handle(IPC.setPrivacyMode, (_e, on: boolean) => setPrivacyMode(on));
 
   ipcMain.handle(IPC.appInfo, () => ({ version: app.getVersion(), platform: process.platform }));
+  ipcMain.handle(IPC.quit, () => app.quit());
 }
