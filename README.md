@@ -16,6 +16,7 @@ Beyond documentation, Repowise continuously monitors **code health**, highlighti
 
 ⭐ If you're building AI-powered software, check out Repowise: https://github.com/repowise-dev/repowise
 </td> </tr> </table>
+
 ## What it does
 
 ```
