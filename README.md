@@ -5,7 +5,17 @@
 Bring your own AI: **Anthropic Claude, OpenAI, Google Gemini, Ollama (fully local), or any OpenAI-compatible endpoint** (LM Studio, Groq, OpenRouter, vLLM, …).
 
 > The copilot only you can see — your notes, answers, and prompts stay out of your screen share and on your machine.
+<table> <tr> <td width="110" valign="top">
+<img width="98" height="98" alt="Screenshot 2026-06-07 at 4 11 50 PM" src="https://github.com/user-attachments/assets/58c6a45f-7ce8-4c5c-8cdb-3f77603d855a" />
+</td> <td valign="top">
+Built with ❤️ using Repowise
 
+Unseen was built with Repowise, an open-source code intelligence platform that continuously maps your codebase into structured knowledge for both humans and AI coding agents. 
+
+Beyond documentation, Repowise continuously monitors **code health**, highlighting architectural hotspots, files likely to become bug-prone, and refactoring opportunities before they slow development.
+
+⭐ If you're building AI-powered software, check out Repowise: https://github.com/repowise-dev/repowise
+</td> </tr> </table>
 ## What it does
 
 ```
