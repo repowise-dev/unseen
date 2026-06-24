@@ -1,7 +1,25 @@
 # Unseen → Personal Transcription & Memory Platform
 
-**Status:** Plan / roadmap
+**Status:** Phases 1–4 implemented (branch `feat/transcription-platform`); Phase 5 deferred (separate project)
 **Author:** brainstormed 2026-06-24
+
+> **Implementation status (2026-06-24)**
+> - **Phase 1 — dictation:** done. Hotkey toggle, non-focusing HUD, single-speaker STT,
+>   LLM cleanup pass, clipboard-paste insertion + manual-paste fallback, Accessibility
+>   gate, per-app exclude, wizard card. Runtime acceptance (paste into real apps,
+>   clipboard restore) needs a GUI session + mic + Deepgram key + Accessibility to verify.
+> - **Phase 2 — log + distillation:** done + unit-tested (idempotent merge). Daily JSONL
+>   log, distill job, fact injection via the knowledge layer, "Distill now" UI.
+> - **Phase 3 — namespaces + Notes:** done in code. Namespaces/combine, watched MD sources,
+>   Apple Notes ingestion (JXA typed text + Media PNG handwriting), swappable offline OCR
+>   seam (weights not vendored — see `docs/ocr-sidecar.md`), health notifications,
+>   self-installing LaunchAgent + `--sync` headless entry. Notes/OCR/LaunchAgent need a
+>   real macOS session to verify end-to-end.
+> - **Phase 4 — iCloud sync:** done. Configurable `dataDir` (+ migration), append-only
+>   log merge (sort+dedupe) and single-distiller lock, both unit-tested; frozen layout in
+>   `docs/data-layout.md`. Cross-device propagation needs two Macs to verify.
+> - **Phase 5 — native iOS:** deferred by design (separate SwiftUI project); unblocked now
+>   that the on-disk format is frozen.
 **Scope:** Extend Unseen from a meeting assistant into a default, system-wide
 transcription tool with a personal/work memory layer, Apple Notes ingestion,
 and cross-device sync.
