@@ -3,6 +3,12 @@
 /** Memory namespaces: a personal and a work knowledge space, combinable. */
 export type Namespace = 'personal' | 'work';
 
+/** A markdown file or folder read straight into a memory namespace (6.2). */
+export interface WatchedSource {
+  path: string;
+  ns: Namespace;
+}
+
 export interface Settings {
   llm: {
     provider: string;
@@ -46,6 +52,20 @@ export interface Settings {
     excludeApps: string[];
     /** Append each dictation to the daily memory log (wired in Phase 2). */
     logToMemory: boolean;
+  };
+  memory: {
+    /** Watched markdown files/folders read straight into a namespace (6.2). */
+    sources: WatchedSource[];
+    notes: {
+      /** Apple Notes ingestion enabled. */
+      enabled: boolean;
+      /** Namespace for notes whose folder isn't explicitly mapped. */
+      defaultNs: Namespace;
+      /** Map a Notes folder name → namespace. */
+      folderMap: { folder: string; ns: Namespace }[];
+      /** Epoch ms of the last successful ingestion (incremental sync). */
+      lastRunAt: number;
+    };
   };
   transcript: {
     windowChars: number;

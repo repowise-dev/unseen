@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   dayKey,
   factKey,
+  mapNamespace,
   mergeFacts,
   parseFactsJson,
   parseLogLine,
@@ -90,6 +91,15 @@ describe('mergeFacts (idempotency)', () => {
     const snapshot = JSON.parse(JSON.stringify(existing));
     mergeFacts(existing, raw, 9999);
     expect(existing).toEqual(snapshot);
+  });
+});
+
+describe('mapNamespace', () => {
+  const map = [{ folder: 'Work', ns: 'work' as const }];
+  it('maps a matched folder (case-insensitive) and falls back to default', () => {
+    expect(mapNamespace('work', map, 'personal')).toBe('work');
+    expect(mapNamespace('Personal Stuff', map, 'personal')).toBe('personal');
+    expect(mapNamespace(undefined, map, 'personal')).toBe('personal');
   });
 });
 

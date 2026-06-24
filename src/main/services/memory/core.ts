@@ -157,6 +157,19 @@ export function parseFactsJson(text: string): RawFact[] {
   return out;
 }
 
+/** Map an Apple Notes folder name to a namespace via the user's rules. */
+export function mapNamespace(
+  folder: string | undefined,
+  folderMap: { folder: string; ns: Namespace }[],
+  defaultNs: Namespace,
+): Namespace {
+  if (folder) {
+    const hit = folderMap.find((m) => m.folder.toLowerCase() === folder.toLowerCase());
+    if (hit) return hit.ns;
+  }
+  return defaultNs;
+}
+
 /** Render a namespace's facts as a compact knowledge block body. */
 export function renderFactsBlock(facts: Fact[]): string {
   const byType = new Map<FactType, Fact[]>();

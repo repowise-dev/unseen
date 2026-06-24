@@ -35,6 +35,12 @@ export const IPC = {
 
   // memory
   memoryDistill: 'memory:distill', // run distillation for today (on-demand)
+  memoryAddSource: 'memory:add-source', // pick a folder/file → watched source
+  memoryRemoveSource: 'memory:remove-source',
+  notesSyncNow: 'notes:sync-now', // run Apple Notes ingestion on demand
+  launchAgentStatus: 'launch-agent:status',
+  launchAgentInstall: 'launch-agent:install',
+  launchAgentUninstall: 'launch-agent:uninstall',
 
   // sessions
   sessionFinal: 'session:final', // fire-and-forget (ipcRenderer.send)

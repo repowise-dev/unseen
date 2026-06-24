@@ -1,11 +1,21 @@
-import React, { useState } from 'react';
-import type { DistillResult } from '../../../shared/types';
+import React, { useEffect, useState } from 'react';
+import type { DistillResult, Namespace } from '../../../shared/types';
 import type { TabProps } from '../App';
+
+const NAMESPACES: Namespace[] = ['personal', 'work'];
 
 export function MemoryTab({ settings, update }: TabProps): React.JSX.Element {
   const [distilling, setDistilling] = useState(false);
   const [result, setResult] = useState<DistillResult[] | null>(null);
+  const [syncing, setSyncing] = useState(false);
+  const [syncMsg, setSyncMsg] = useState<string | null>(null);
+  const [agentInstalled, setAgentInstalled] = useState(false);
   const d = settings.dictation;
+  const notes = settings.memory.notes;
+
+  useEffect(() => {
+    void window.unseen.launchAgentStatus().then((s) => setAgentInstalled(s.installed));
+  }, []);
 
   const distill = async (): Promise<void> => {
     setDistilling(true);
@@ -15,6 +25,28 @@ export function MemoryTab({ settings, update }: TabProps): React.JSX.Element {
     } finally {
       setDistilling(false);
     }
+  };
+
+  const syncNotes = async (): Promise<void> => {
+    setSyncing(true);
+    setSyncMsg(null);
+    try {
+      const r = await window.unseen.notesSyncNow();
+      setSyncMsg(
+        `Ingested ${r.typed} typed note(s), ${r.handwritten} handwritten` +
+          (r.skippedNoOcr ? ` (${r.skippedNoOcr} skipped — no OCR engine installed)` : ''),
+      );
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  const toggleAgent = async (): Promise<void> => {
+    const res = agentInstalled
+      ? await window.unseen.launchAgentUninstall()
+      : await window.unseen.launchAgentInstall();
+    if (res.ok) setAgentInstalled(!agentInstalled);
+    else setSyncMsg(res.error ?? 'Failed.');
   };
 
   return (
@@ -101,6 +133,87 @@ export function MemoryTab({ settings, update }: TabProps): React.JSX.Element {
                   .join(' · ')}
           </div>
         )}
+      </div>
+
+      <h2 style={{ marginTop: 24 }}>Knowledge sources</h2>
+      {NAMESPACES.map((ns) => (
+        <div className="field" key={ns}>
+          <label style={{ textTransform: 'capitalize' }}>{ns} markdown</label>
+          {settings.memory.sources
+            .filter((s) => s.ns === ns)
+            .map((s) => (
+              <div className="row" key={s.path} style={{ alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 12, wordBreak: 'break-all', flex: 1 }}>{s.path}</span>
+                <button
+                  className="btn secondary"
+                  onClick={() =>
+                    void window.unseen.memoryRemoveSource(s.path, ns).then(() => undefined)
+                  }
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          <button className="btn secondary" onClick={() => void window.unseen.memoryAddSource(ns)}>
+            Add {ns} file/folder…
+          </button>
+        </div>
+      ))}
+      <div className="hint">
+        Markdown files/folders (work notes, an Obsidian vault) are read straight into a namespace —
+        a profile with that namespace in its <code>memory.namespaces</code> injects them.
+      </div>
+
+      <h2 style={{ marginTop: 24 }}>Apple Notes</h2>
+      <div className="field">
+        <label className="checkbox">
+          <input
+            type="checkbox"
+            checked={notes.enabled}
+            onChange={(e) => update({ memory: { notes: { enabled: e.target.checked } } })}
+          />
+          Ingest Apple Notes into memory
+        </label>
+        <div className="hint">
+          Typed notes are read via the official scripting API; handwriting uses Apple&apos;s
+          pre-rendered images + a local OCR engine (offline). macOS only; needs Automation
+          permission for Notes.
+        </div>
+      </div>
+      <div className="field">
+        <label>Default namespace for notes</label>
+        <select
+          value={notes.defaultNs}
+          onChange={(e) => update({ memory: { notes: { defaultNs: e.target.value as Namespace } } })}
+        >
+          {NAMESPACES.map((ns) => (
+            <option key={ns} value={ns}>
+              {ns}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="field">
+        <button className="btn" onClick={() => void syncNotes()} disabled={syncing || !notes.enabled}>
+          {syncing ? 'Syncing…' : 'Sync notes now'}
+        </button>
+        {syncMsg && (
+          <div className="verify ok" style={{ marginTop: 8 }}>
+            {syncMsg}
+          </div>
+        )}
+      </div>
+
+      <h2 style={{ marginTop: 24 }}>Background sync</h2>
+      <div className="field">
+        <label className="checkbox">
+          <input type="checkbox" checked={agentInstalled} onChange={() => void toggleAgent()} />
+          Run notes ingestion + distillation on a schedule
+        </label>
+        <div className="hint">
+          Installs a macOS LaunchAgent that runs hourly and at 23:30 — even when the app window is
+          closed. No manual setup.
+        </div>
       </div>
     </div>
   );

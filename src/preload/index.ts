@@ -7,6 +7,7 @@ import type {
   DeepPartial,
   DistillResult,
   ModelInfo,
+  Namespace,
   Profile,
   ProfileSummary,
   ProviderInfo,
@@ -62,6 +63,18 @@ const api = {
 
   // memory
   memoryDistill: (): Promise<DistillResult[]> => ipcRenderer.invoke(IPC.memoryDistill),
+  memoryAddSource: (ns: Namespace): Promise<Settings> =>
+    ipcRenderer.invoke(IPC.memoryAddSource, ns),
+  memoryRemoveSource: (path: string, ns: Namespace): Promise<Settings> =>
+    ipcRenderer.invoke(IPC.memoryRemoveSource, path, ns),
+  notesSyncNow: (): Promise<{ typed: number; handwritten: number; skippedNoOcr: number }> =>
+    ipcRenderer.invoke(IPC.notesSyncNow),
+  launchAgentStatus: (): Promise<{ installed: boolean }> =>
+    ipcRenderer.invoke(IPC.launchAgentStatus),
+  launchAgentInstall: (): Promise<{ ok: boolean; error?: string }> =>
+    ipcRenderer.invoke(IPC.launchAgentInstall),
+  launchAgentUninstall: (): Promise<{ ok: boolean; error?: string }> =>
+    ipcRenderer.invoke(IPC.launchAgentUninstall),
   onDictationStart: (cb: () => void) => ipcRenderer.on(IPC.evDictationStart, () => cb()),
   onDictationStop: (cb: () => void) => ipcRenderer.on(IPC.evDictationStop, () => cb()),
   onDictationCleanupDelta: (cb: (text: string) => void) =>

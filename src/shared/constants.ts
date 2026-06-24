@@ -39,6 +39,15 @@ export const DEFAULT_SETTINGS: Settings = {
     excludeApps: [],
     logToMemory: true,
   },
+  memory: {
+    sources: [],
+    notes: {
+      enabled: false,
+      defaultNs: 'personal',
+      folderMap: [],
+      lastRunAt: 0,
+    },
+  },
   transcript: {
     windowChars: 4000,
     retentionMin: 3,

@@ -8,8 +8,29 @@ import { openSettingsWindow } from './windows/settings';
 import { initProfiles, disposeProfiles } from './services/profiles';
 import { getSecret } from './services/secrets';
 import { settings } from './services/settings';
+import { ingestNotes } from './services/notes/ingest';
+import { distillToday } from './services/memory/distill';
 
-app.whenReady().then(() => {
+// Headless scheduler entry: the LaunchAgent relaunches us with `--sync` to run
+// Notes ingestion + distillation without opening any window, then quit.
+const SYNC_MODE = process.argv.includes('--sync');
+
+async function runHeadlessSync(): Promise<void> {
+  try {
+    await ingestNotes();
+    await distillToday();
+  } catch (err) {
+    console.error('[sync] headless run failed', err);
+  }
+}
+
+app.whenReady().then(async () => {
+  if (SYNC_MODE) {
+    await runHeadlessSync();
+    app.quit();
+    return;
+  }
+
   initProfiles();
   registerIpc();
   createOverlay();

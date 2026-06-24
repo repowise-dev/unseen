@@ -1,4 +1,4 @@
-import { app, ipcMain } from 'electron';
+import { app, ipcMain, dialog } from 'electron';
 import { IPC } from '../shared/ipc-contract';
 import type { AnswerPayload, DeepPartial, Settings } from '../shared/types';
 import { settings } from './services/settings';
@@ -31,6 +31,13 @@ import { isAccessibilityTrusted } from './permissions';
 import { finishDictation } from './dictation';
 import { appendLogEvent } from './services/memory/log';
 import { distillToday } from './services/memory/distill';
+import { ingestNotes } from './services/notes/ingest';
+import {
+  launchAgentInstalled,
+  installLaunchAgent,
+  uninstallLaunchAgent,
+} from './launch-agent';
+import type { Namespace } from '../shared/types';
 
 export function registerIpc(): void {
   ipcMain.handle(IPC.settingsGet, () => settings().get());
@@ -127,6 +134,33 @@ export function registerIpc(): void {
   ipcMain.handle(IPC.permAccessibility, () => isAccessibilityTrusted(true));
 
   ipcMain.handle(IPC.memoryDistill, () => distillToday());
+
+  // Watched markdown sources (6.2): pick a folder/file → map to a namespace.
+  ipcMain.handle(IPC.memoryAddSource, async (_e, ns: Namespace) => {
+    const res = await dialog.showOpenDialog({
+      title: 'Add a markdown source',
+      properties: ['openFile', 'openDirectory'],
+      filters: [{ name: 'Markdown', extensions: ['md', 'markdown'] }],
+    });
+    if (res.canceled || res.filePaths.length === 0) return settings().get();
+    const sources = [...settings().get().memory.sources];
+    for (const path of res.filePaths) {
+      if (!sources.some((s) => s.path === path && s.ns === ns)) sources.push({ path, ns });
+    }
+    return settings().set({ memory: { sources } });
+  });
+  ipcMain.handle(IPC.memoryRemoveSource, (_e, path: string, ns: Namespace) => {
+    const sources = settings()
+      .get()
+      .memory.sources.filter((s) => !(s.path === path && s.ns === ns));
+    return settings().set({ memory: { sources } });
+  });
+
+  // Apple Notes ingestion + scheduler (6.3 / 6.4).
+  ipcMain.handle(IPC.notesSyncNow, () => ingestNotes());
+  ipcMain.handle(IPC.launchAgentStatus, () => ({ installed: launchAgentInstalled() }));
+  ipcMain.handle(IPC.launchAgentInstall, () => installLaunchAgent());
+  ipcMain.handle(IPC.launchAgentUninstall, () => uninstallLaunchAgent());
 
   ipcMain.handle(IPC.openSettings, () => openSettingsWindow());
   ipcMain.handle(IPC.setPrivacyMode, (_e, on: boolean) => setPrivacyMode(on));

@@ -4,7 +4,7 @@ import { IPC } from '../../../shared/ipc-contract';
 import { LLM_STALL_TIMEOUT_MS } from '../../../shared/constants';
 import { settings } from '../settings';
 import { getActiveProfile } from '../profiles';
-import { loadKnowledge, loadMemoryFacts } from '../knowledge';
+import { loadKnowledge, loadMemoryFacts, loadWatchedMarkdown } from '../knowledge';
 import { buildAnswerRequest } from '../prompt-builder';
 import { getLlmProvider, providerContext } from './registry';
 import { estimateCost } from './prices';
@@ -40,10 +40,11 @@ export async function runAnswer(sender: WebContents, payload: AnswerPayload): Pr
 
   const cfg = settings().get();
   const profile = getActiveProfile();
+  const namespaces = profile.memory?.namespaces ?? [];
   const request: LlmRequest = buildAnswerRequest({
     profile,
     knowledge: loadKnowledge(profile),
-    memory: loadMemoryFacts(profile.memory?.namespaces ?? []),
+    memory: [...loadMemoryFacts(namespaces), ...loadWatchedMarkdown(namespaces)],
     settings: cfg,
     ...payload,
   });
