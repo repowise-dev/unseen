@@ -80,16 +80,31 @@ export function MemoryTab({ settings, update }: TabProps): React.JSX.Element {
       </div>
 
       <div className="field">
-        <label>Cleanup model</label>
-        <input
-          value={d.model}
-          onChange={(e) => update({ dictation: { model: e.target.value } })}
-        />
+        <label className="checkbox">
+          <input
+            type="checkbox"
+            checked={d.cleanup}
+            onChange={(e) => update({ dictation: { cleanup: e.target.checked } })}
+          />
+          Clean up dictation with AI (filler removal, punctuation)
+        </label>
         <div className="hint">
-          Fast model used to clean up dictated speech (runs on your active LLM provider). Default:
-          claude-haiku-4-5.
+          Off = insert your words verbatim, instantly. On = an LLM tidies the text first (slower,
+          can occasionally overcorrect).
         </div>
       </div>
+      {d.cleanup && (
+        <div className="field">
+          <label>Cleanup model</label>
+          <input
+            value={d.model}
+            onChange={(e) => update({ dictation: { model: e.target.value } })}
+          />
+          <div className="hint">
+            Fast model used to clean up dictated speech (runs on your active LLM provider).
+          </div>
+        </div>
+      )}
 
       <div className="field">
         <label>Excluded apps</label>

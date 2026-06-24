@@ -9,7 +9,7 @@ export function reportNotesAnomaly(message: string): void {
   console.warn('[notes] anomaly:', message);
   try {
     new Notification({
-      title: 'Engram — Notes sync',
+      title: 'Unseen — Notes sync',
       body: message,
     }).show();
   } catch {
@@ -29,7 +29,7 @@ export function checkNotesHealth(opts: {
 }): void {
   if (opts.notesFound === 0 && opts.accountHasAny) {
     reportNotesAnomaly(
-      'Notes sync found nothing although notes exist — Engram may need an update.',
+      'Notes sync found nothing although notes exist — Unseen may need an update.',
     );
   }
   if (!opts.mediaExists) {

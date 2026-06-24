@@ -93,6 +93,7 @@ const api = {
 
   openSettings: (): Promise<void> => ipcRenderer.invoke(IPC.openSettings),
   setPrivacyMode: (on: boolean): Promise<void> => ipcRenderer.invoke(IPC.setPrivacyMode, on),
+  overlayMinimize: (): Promise<void> => ipcRenderer.invoke(IPC.overlayMinimize),
   appInfo: (): Promise<AppInfo> => ipcRenderer.invoke(IPC.appInfo),
   quit: (): Promise<void> => ipcRenderer.invoke(IPC.quit),
 

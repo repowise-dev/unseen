@@ -31,10 +31,11 @@ export const DEFAULT_SETTINGS: Settings = {
     pause: 'CommandOrControl+Shift+P',
     cycleProfile: 'CommandOrControl+Shift+]',
     privacyMode: 'CommandOrControl+Shift+H',
-    dictation: 'CommandOrControl+Shift+D',
+    dictation: 'Control+Space',
   },
   dictation: {
     enabled: true,
+    cleanup: true,
     model: 'claude-haiku-4-5',
     excludeApps: [],
     logToMemory: true,

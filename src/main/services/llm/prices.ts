@@ -13,6 +13,7 @@ const PRICES: Record<string, Price> = {
   'claude-haiku-4-5': { input: 1, output: 5, cacheRead: 0.1 },
   'gemini-2.5-flash': { input: 0.3, output: 2.5 },
   'gemini-2.5-pro': { input: 1.25, output: 10 },
+  'gpt-5-mini': { input: 0.25, output: 2, cacheRead: 0.025 },
 };
 
 export function estimateCost(

@@ -4,7 +4,7 @@
 
 - **Transcripts and answers never leave your machine** except as API calls to
   the STT/LLM providers *you* configured.
-- **No telemetry.** Engram phones home to no one. Verify it: grep the source for
+- **No telemetry.** Unseen phones home to no one. Verify it: grep the source for
   network calls — you'll find only the provider clients.
 - **API keys** are encrypted via your OS keychain (Electron `safeStorage`).
 

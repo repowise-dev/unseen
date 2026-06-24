@@ -46,6 +46,9 @@ export interface Settings {
   };
   dictation: {
     enabled: boolean;
+    /** Run the LLM cleanup pass (filler removal, punctuation). Off = insert the
+     *  raw transcription instantly. */
+    cleanup: boolean;
     /** Model used for the post-dictation cleanup pass (runs on llm.provider). */
     model: string;
     /** Front-app names where dictation skips insertion (and Phase 2 logging). */

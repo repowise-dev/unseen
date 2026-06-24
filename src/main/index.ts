@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, session, systemPreferences } from 'electron';
 import { registerIpc } from './ipc';
 import { registerShortcuts, unregisterShortcuts } from './shortcuts';
 import { createOverlay } from './windows/overlay';
@@ -29,6 +29,36 @@ app.whenReady().then(async () => {
     await runHeadlessSync();
     app.quit();
     return;
+  }
+
+  // Microphone access for the renderer's getUserMedia. Two layers must say yes:
+  //  1. Electron's permission handler (below), and
+  //  2. on macOS, the OS itself — which only prompts if we explicitly call
+  //     askForMediaAccess. Without it, getUserMedia returns NotAllowedError and
+  //     the STT client loops "reconnecting".
+  const allowMedia = (permission: string): boolean =>
+    permission === 'media' || permission === 'microphone' || permission === 'audioCapture';
+
+  const ensureMicAccess = async (): Promise<boolean> => {
+    if (process.platform !== 'darwin') return true;
+    const status = systemPreferences.getMediaAccessStatus('microphone');
+    if (status === 'granted') return true;
+    // 'denied'/'restricted' won't re-prompt — the user must flip it in System
+    // Settings; the renderer surfaces that message. 'not-determined' → prompt.
+    if (status === 'denied' || status === 'restricted') return false;
+    return systemPreferences.askForMediaAccess('microphone');
+  };
+
+  session.defaultSession.setPermissionRequestHandler((_wc, permission, callback) => {
+    if (!allowMedia(permission)) {
+      callback(false);
+      return;
+    }
+    void ensureMicAccess().then(callback);
+  });
+  session.defaultSession.setPermissionCheckHandler((_wc, permission) => allowMedia(permission));
+  if (process.platform === 'darwin') {
+    console.log('[mic] macOS microphone status at launch:', systemPreferences.getMediaAccessStatus('microphone'));
   }
 
   initProfiles();

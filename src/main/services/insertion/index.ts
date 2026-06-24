@@ -31,7 +31,7 @@ export async function insertText(text: string): Promise<InsertResult> {
     // Leave `text` on the clipboard (do NOT restore) so manual paste works.
     const reason = String((err as Error)?.message ?? err);
     new Notification({
-      title: 'Engram — dictation',
+      title: 'Unseen — dictation',
       body: 'Could not paste automatically. The cleaned text is on your clipboard — press ⌘V.',
     }).show();
     return { pasted: false, reason };

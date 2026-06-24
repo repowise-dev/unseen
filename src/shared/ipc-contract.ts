@@ -24,6 +24,7 @@ export const IPC = {
   answerCancel: 'answer:cancel',
   openSettings: 'window:open-settings',
   setPrivacyMode: 'overlay:set-privacy',
+  overlayMinimize: 'overlay:minimize',
   appInfo: 'app:info',
   quit: 'app:quit',
 

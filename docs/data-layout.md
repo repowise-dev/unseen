@@ -17,8 +17,8 @@ This layout is **frozen** as of Phase 4 so the future native iOS client (Phase
 `<dataDir>` is configurable (Settings → Memory → Data location):
 
 - **Local (default):** the OS userData dir
-  (`~/Library/Application Support/Engram` on macOS).
-- **iCloud:** `~/Library/Mobile Documents/com~apple~CloudDocs/Engram/`. A second
+  (`~/Library/Application Support/Unseen` on macOS).
+- **iCloud:** `~/Library/Mobile Documents/com~apple~CloudDocs/Unseen/`. A second
   Mac that signs into the same iCloud sees the same data after sync.
 
 ## What does NOT sync (stays in local userData)

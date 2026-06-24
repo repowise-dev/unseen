@@ -1,4 +1,4 @@
-# Contributing to Engram
+# Contributing to Unseen
 
 Thanks for helping! The codebase is deliberately modular — most contributions
 touch exactly one file plus a registry entry.

@@ -26,7 +26,7 @@ export function userDataDir(): string {
 
 /** Canonical iCloud Drive location offered in Settings. */
 export function iCloudDir(): string {
-  return join(homedir(), 'Library', 'Mobile Documents', 'com~apple~CloudDocs', 'Engram');
+  return join(homedir(), 'Library', 'Mobile Documents', 'com~apple~CloudDocs', 'Unseen');
 }
 
 /** Root for synced data. settings.dataDir when set, else local userData. */

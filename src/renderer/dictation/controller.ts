@@ -61,6 +61,12 @@ async function stop(): Promise<void> {
     await finish();
     return;
   }
+  // Skip the LLM cleanup pass when disabled: insert the raw transcript instantly.
+  const cleanupOn = (await window.unseen.settingsGet()).dictation.cleanup;
+  if (!cleanupOn) {
+    await insertAndFinish(raw);
+    return;
+  }
   store().setState('cleaning');
   await window.unseen.dictationCleanup(raw);
 }

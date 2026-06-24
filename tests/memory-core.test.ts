@@ -65,7 +65,7 @@ describe('parseFactsJson', () => {
 describe('mergeFacts (idempotency)', () => {
   const raw: RawFact[] = [
     { type: 'person', subject: 'Ada', value: 'is a colleague' },
-    { type: 'topic', subject: 'Engram', value: 'is the project' },
+    { type: 'topic', subject: 'Unseen', value: 'is the project' },
   ];
 
   it('adds new facts with provenance', () => {
@@ -136,7 +136,7 @@ describe('renderFactsBlock', () => {
   it('groups facts by type with headers', () => {
     const facts: Fact[] = [
       { id: 'a', type: 'person', subject: 'Ada', value: 'colleague', firstSeen: 1, lastSeen: 1, sources: 1 },
-      { id: 'b', type: 'topic', subject: 'Engram', value: 'the project', firstSeen: 1, lastSeen: 1, sources: 1 },
+      { id: 'b', type: 'topic', subject: 'Unseen', value: 'the project', firstSeen: 1, lastSeen: 1, sources: 1 },
     ];
     const text = renderFactsBlock(facts);
     expect(text).toContain('PERSON:');

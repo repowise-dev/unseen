@@ -1,4 +1,4 @@
-# Engram → Personal Transcription & Memory Platform
+# Unseen → Personal Transcription & Memory Platform
 
 **Status:** Phases 1–4 implemented (branch `feat/transcription-platform`); Phase 5 deferred (separate project)
 **Author:** brainstormed 2026-06-24
@@ -20,7 +20,7 @@
 >   `docs/data-layout.md`. Cross-device propagation needs two Macs to verify.
 > - **Phase 5 — native iOS:** deferred by design (separate SwiftUI project); unblocked now
 >   that the on-disk format is frozen.
-**Scope:** Extend Engram from a meeting assistant into a default, system-wide
+**Scope:** Extend Unseen from a meeting assistant into a default, system-wide
 transcription tool with a personal/work memory layer, Apple Notes ingestion,
 and cross-device sync.
 
@@ -28,7 +28,7 @@ and cross-device sync.
 
 ## 1. Vision
 
-Engram becomes a transcription **engine** with three surfaces sharing one
+Unseen becomes a transcription **engine** with three surfaces sharing one
 STT + LLM + storage core:
 
 1. **Dictation mode** — tap a global hotkey, talk into *any* text field in *any*
@@ -82,7 +82,7 @@ job, notes-ingestion service + OSS-OCR sidecar, LaunchAgent installer,
 iCloud data-dir setting.
 
 > **Data dir note:** today storage is `app.getPath('userData')` (macOS:
-> `~/Library/Application Support/Engram`). Phases below introduce a configurable
+> `~/Library/Application Support/Unseen`). Phases below introduce a configurable
 > `dataDir` so it can point at iCloud. All services must route through one helper
 > (`paths.ts`) instead of calling `app.getPath('userData')` directly.
 
@@ -354,7 +354,7 @@ Namespace mapping: a settings rule maps Notes folders → `personal`/`work`
 `services/notes/health.ts`:
 - After each run, if AppleScript returns 0 notes when notes exist, or the
   `Media/` path is missing/changed → log an anomaly and **post a native
-  notification** ("Notes sync found nothing — Engram may need an update").
+  notification** ("Notes sync found nothing — Unseen may need an update").
 - Worst case after a macOS update = a heads-up, not silent data loss.
 
 ### 6.6 Vendoring the OCR sidecar
@@ -379,7 +379,7 @@ Namespace mapping: a settings rule maps Notes folders → `personal`/`work`
 
 ## 7. Phase 4 — iCloud cross-device sync
 
-**Goal:** Clone Engram on a second Mac → same logs/graph for the day.
+**Goal:** Clone Unseen on a second Mac → same logs/graph for the day.
 
 ### 7.1 Configurable data dir
 
@@ -387,7 +387,7 @@ Namespace mapping: a settings rule maps Notes folders → `personal`/`work`
   all storage paths. Migrate every `app.getPath('userData')` call to route
   through it.
 - Default option in Settings: **"Store data in iCloud"** →
-  `~/Library/Mobile Documents/com~apple~CloudDocs/Engram/`.
+  `~/Library/Mobile Documents/com~apple~CloudDocs/Unseen/`.
 - One-time migration: copy existing `userData` contents into the chosen dir.
 
 ### 7.2 Sync mechanics
@@ -406,7 +406,7 @@ Namespace mapping: a settings rule maps Notes folders → `personal`/`work`
 Freeze the on-disk layout now:
 
 ```
-Engram/
+Unseen/
   memory/
     log/<YYYY-MM-DD>.jsonl
     facts/{personal,work}/<YYYY-MM-DD>.json

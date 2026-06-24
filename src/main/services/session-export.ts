@@ -14,7 +14,7 @@ export function sessionToMarkdown(events: SessionEvent[]): string {
   const answers = events.filter((e) => e.type === 'answer').length;
 
   const lines: string[] = [];
-  lines.push(`# Engram session — ${start ? new Date(start).toLocaleString() : 'empty'}`);
+  lines.push(`# Unseen session — ${start ? new Date(start).toLocaleString() : 'empty'}`);
   lines.push('');
   if (start && end && end > start) {
     lines.push(`*${Math.round((end - start) / 60_000)} min · ${finals} transcript segments · ${answers} answers*`);

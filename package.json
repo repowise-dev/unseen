@@ -1,5 +1,5 @@
 {
-  "name": "engram",
+  "name": "unseen",
   "version": "0.1.0",
   "description": "A photographic memory for everything you say, hear, and write. Open-source, local-first transcription engine with dictation, a meeting copilot, and a self-distilling personal/work memory layer. Swappable LLM/STT providers, profile-driven.",
   "license": "MIT",
@@ -9,10 +9,10 @@
     "email": "noreply@github.com"
   },
   "main": "out/main/index.js",
-  "homepage": "https://github.com/repowise-dev/engram",
+  "homepage": "https://github.com/repowise-dev/unseen",
   "repository": {
     "type": "git",
-    "url": "https://github.com/repowise-dev/engram.git"
+    "url": "https://github.com/repowise-dev/unseen.git"
   },
   "scripts": {
     "dev": "electron-vite dev",
@@ -26,8 +26,8 @@
     "test:watch": "vitest"
   },
   "build": {
-    "appId": "dev.repowise.engram",
-    "productName": "Engram",
+    "appId": "dev.repowise.unseen",
+    "productName": "Unseen",
     "files": [
       "out/**"
     ],
@@ -62,7 +62,7 @@
     "publish": {
       "provider": "github",
       "owner": "repowise-dev",
-      "repo": "engram"
+      "repo": "unseen"
     }
   },
   "dependencies": {

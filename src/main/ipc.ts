@@ -23,7 +23,7 @@ import { getLlmProvider, listLlmProviders, providerContext } from './services/ll
 import { runAnswer, cancelAnswer } from './services/llm/run-answer';
 import { getSttProvider, listSttProviders } from './services/stt/registry';
 import { openSettingsWindow } from './windows/settings';
-import { setPrivacyMode } from './windows/overlay';
+import { setPrivacyMode, minimizeOverlay } from './windows/overlay';
 import { runDictationCleanup } from './services/dictation/cleanup';
 import { insertText } from './services/insertion';
 import { frontmostApp } from './services/insertion/paste-macos';
@@ -182,6 +182,7 @@ export function registerIpc(): void {
 
   ipcMain.handle(IPC.openSettings, () => openSettingsWindow());
   ipcMain.handle(IPC.setPrivacyMode, (_e, on: boolean) => setPrivacyMode(on));
+  ipcMain.handle(IPC.overlayMinimize, () => minimizeOverlay());
 
   ipcMain.handle(IPC.appInfo, () => ({ version: app.getVersion(), platform: process.platform }));
   ipcMain.handle(IPC.quit, () => app.quit());
