@@ -1,7 +1,7 @@
 {
-  "name": "unseen",
+  "name": "engram",
   "version": "0.1.0",
-  "description": "Open-source real-time meeting copilot — listens, transcribes, and assists live, with swappable LLM/STT providers and profile-driven behavior.",
+  "description": "A photographic memory for everything you say, hear, and write. Open-source, local-first transcription engine with dictation, a meeting copilot, and a self-distilling personal/work memory layer. Swappable LLM/STT providers, profile-driven.",
   "license": "MIT",
   "private": true,
   "author": {
@@ -9,10 +9,10 @@
     "email": "noreply@github.com"
   },
   "main": "out/main/index.js",
-  "homepage": "https://github.com/repowise-dev/unseen",
+  "homepage": "https://github.com/repowise-dev/engram",
   "repository": {
     "type": "git",
-    "url": "https://github.com/repowise-dev/unseen.git"
+    "url": "https://github.com/repowise-dev/engram.git"
   },
   "scripts": {
     "dev": "electron-vite dev",
@@ -26,8 +26,8 @@
     "test:watch": "vitest"
   },
   "build": {
-    "appId": "dev.repowise.unseen",
-    "productName": "Unseen",
+    "appId": "dev.repowise.engram",
+    "productName": "Engram",
     "files": [
       "out/**"
     ],
@@ -62,7 +62,7 @@
     "publish": {
       "provider": "github",
       "owner": "repowise-dev",
-      "repo": "unseen"
+      "repo": "engram"
     }
   },
   "dependencies": {

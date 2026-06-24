@@ -12,6 +12,6 @@ labels: bug
 
 **Environment**
 - OS:
-- Unseen version:
+- Engram version:
 - LLM provider/model:
 - STT provider:

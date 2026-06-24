@@ -1,6 +1,6 @@
 # Capturing the other side of the call
 
-By default Unseen transcribes your microphone only. To also transcribe the other
+By default Engram transcribes your microphone only. To also transcribe the other
 participants, route system audio into a virtual input device and select it in
 **Settings → Audio**.
 
@@ -11,7 +11,7 @@ participants, route system audio into a virtual input device and select it in
    speakers/headphones **and** BlackHole 2ch.
 3. Set system output to the Multi-Output Device (you still hear everything;
    BlackHole gets a copy).
-4. In Unseen: Settings → Audio → Microphone → **BlackHole 2ch**.
+4. In Engram: Settings → Audio → Microphone → **BlackHole 2ch**.
 
 To mix your mic *and* system audio into one stream, create an *Aggregate
 Device* containing your mic + BlackHole and select that instead. (A built-in
@@ -21,16 +21,16 @@ mixed-capture mode is on the roadmap.)
 
 Options today:
 - **Stereo Mix** (if your driver exposes it): enable in Sound settings →
-  Recording, select it in Unseen.
+  Recording, select it in Engram.
 - [VB-CABLE](https://vb-audio.com/Cable/): set playback to CABLE Input, select
-  CABLE Output as Unseen's microphone.
+  CABLE Output as Engram's microphone.
 
 Native WASAPI loopback capture is on the roadmap.
 
 ## Linux — PulseAudio/PipeWire
 
-Select the `monitor` source of your output device as Unseen's microphone
-(`pavucontrol` → Recording tab while Unseen is listening).
+Select the `monitor` source of your output device as Engram's microphone
+(`pavucontrol` → Recording tab while Engram is listening).
 
 ## A note on diarization
 

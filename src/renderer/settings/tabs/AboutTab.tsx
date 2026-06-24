@@ -14,11 +14,11 @@ export function AboutTab({ settings }: { settings: Settings }): React.JSX.Elemen
 
   return (
     <div className="about">
-      <h2>Unseen {info ? `v${info.version}` : ''}</h2>
-      <p>Open-source real-time meeting copilot.</p>
+      <h2>Engram {info ? `v${info.version}` : ''}</h2>
+      <p>Your photographic memory — open-source, local-first.</p>
       <p>
-        <a href="https://github.com/repowise-dev/unseen" target="_blank" rel="noreferrer">
-          github.com/repowise-dev/unseen
+        <a href="https://github.com/repowise-dev/engram" target="_blank" rel="noreferrer">
+          github.com/repowise-dev/engram
         </a>
       </p>
 

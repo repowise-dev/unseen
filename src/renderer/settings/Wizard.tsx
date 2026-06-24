@@ -51,9 +51,9 @@ export function Wizard({ settings, update }: TabProps): React.JSX.Element {
 
         {step === 'welcome' && (
           <>
-            <h2>Welcome to Unseen 👋</h2>
+            <h2>Welcome to Engram 👋</h2>
             <p>
-              Unseen listens to your conversations, transcribes them live, and surfaces answers and
+              Engram listens to your conversations, transcribes them live, and surfaces answers and
               notes in a floating panel. Setup takes about a minute: a transcription key, an AI
               provider, and a profile.
             </p>
@@ -73,7 +73,7 @@ export function Wizard({ settings, update }: TabProps): React.JSX.Element {
           <>
             <h2>1 · Transcription</h2>
             <p className="hint">
-              Unseen uses Deepgram for live speech-to-text (generous free tier). Grab a key at{' '}
+              Engram uses Deepgram for live speech-to-text (generous free tier). Grab a key at{' '}
               <b>console.deepgram.com</b> → API Keys.
             </p>
             <div className="field" style={{ marginTop: 12 }}>
@@ -218,7 +218,7 @@ export function Wizard({ settings, update }: TabProps): React.JSX.Element {
               <label>Dictation (talk into any app)</label>
               <p className="hint" style={{ marginBottom: 8 }}>
                 Press <kbd>⌘⇧D</kbd> in any app to dictate; press it again to insert cleaned text at
-                the cursor. This needs <b>Accessibility</b> permission so Unseen can paste for you.
+                the cursor. This needs <b>Accessibility</b> permission so Engram can paste for you.
               </p>
               <button
                 className="btn secondary"
@@ -228,7 +228,7 @@ export function Wizard({ settings, update }: TabProps): React.JSX.Element {
               </button>
               {a11yState === 'denied' && (
                 <div className="verify bad">
-                  ✗ Not yet granted — enable Unseen in System Settings → Privacy &amp; Security →
+                  ✗ Not yet granted — enable Engram in System Settings → Privacy &amp; Security →
                   Accessibility, then re-check.
                 </div>
               )}
@@ -240,7 +240,7 @@ export function Wizard({ settings, update }: TabProps): React.JSX.Element {
               invisible to screen shares.
             </p>
             <div className="row wizard-nav">
-              <button className="btn" onClick={finish}>Start using Unseen</button>
+              <button className="btn" onClick={finish}>Start using Engram</button>
             </div>
           </>
         )}

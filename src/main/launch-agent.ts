@@ -8,11 +8,11 @@ import { existsSync, mkdirSync, writeFileSync, rmSync } from 'fs';
 const run = promisify(execFile);
 
 // The app installs its OWN LaunchAgent (decision #8) — no manual Shortcuts
-// setup. The agent relaunches Unseen with `--sync`, which runs Notes ingestion
+// setup. The agent relaunches Engram with `--sync`, which runs Notes ingestion
 // + distillation headlessly (no window) and quits. Scheduled hourly plus a
 // fixed end-of-day run, so memory accumulates whether or not the app is open.
 
-const LABEL = 'ai.unseen.sync';
+const LABEL = 'ai.engram.sync';
 
 function plistPath(): string {
   return join(homedir(), 'Library', 'LaunchAgents', `${LABEL}.plist`);

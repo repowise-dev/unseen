@@ -72,7 +72,7 @@ export function App(): React.JSX.Element {
           </button>
           <button
             className="ghost-btn"
-            title="Quit Unseen"
+            title="Quit Engram"
             onClick={() => void window.unseen.quit()}
           >
             ✕

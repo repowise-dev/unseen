@@ -1,6 +1,8 @@
-# Unseen
+# Engram — your photographic memory
 
-**A photographic memory for everything you say, hear, and write.** Unseen is an open-source, local-first transcription engine with a memory that compounds: dictate into any app, capture every meeting, ingest your notes — and it quietly distills all of it into a private, structured knowledge base that you *and* your AI can draw on.
+**Engram is the part of your memory that never forgets.** An open-source, local-first transcription engine with a memory that compounds: dictate into any app, capture every meeting, ingest your notes — and it quietly distills all of it into a private, structured knowledge base that you *and* your AI can draw on.
+
+<sub>*engram (n.)* — the physical trace a memory leaves in the brain.</sub>
 
 Bring your own AI: **Anthropic Claude, OpenAI, Google Gemini, Ollama (fully local), or any OpenAI-compatible endpoint** (LM Studio, Groq, OpenRouter, vLLM, …).
 
@@ -11,7 +13,7 @@ Bring your own AI: **Anthropic Claude, OpenAI, Google Gemini, Ollama (fully loca
 </td> <td valign="top">
 Built with ❤️ using Repowise
 
-Unseen was built with Repowise, an open-source code intelligence platform that continuously maps your codebase into structured knowledge for both humans and AI coding agents. 
+Engram was built with Repowise, an open-source code intelligence platform that continuously maps your codebase into structured knowledge for both humans and AI coding agents. 
 
 Beyond documentation, Repowise continuously monitors **code health**, highlighting architectural hotspots, files likely to become bug-prone, and refactoring opportunities before they slow development.
 
@@ -20,11 +22,11 @@ Beyond documentation, Repowise continuously monitors **code health**, highlighti
 
 ## Three surfaces, one memory
 
-Unseen is one STT + LLM + storage core wearing three hats:
+Engram is one STT + LLM + storage core wearing three hats:
 
 1. **🎙 Dictation** — tap a hotkey in *any* app, talk into *any* text field, get cleaned-up text inserted at your cursor. Filler words, false starts, and stray punctuation are stripped by a fast LLM pass before the text lands.
 2. **💬 Meeting copilot** — the floating, capture-invisible overlay that transcribes live and surfaces answers, notes, and talking points on demand.
-3. **🧠 Memory** — every dictation, meeting, and note feeds a per-day log that a distillation job turns into an accumulating, structured knowledge base — split into **personal** and **work**, combinable on demand. That memory is injected back into your prompts, so the more you use Unseen, the more context your AI has.
+3. **🧠 Memory** — every dictation, meeting, and note feeds a per-day log that a distillation job turns into an accumulating, structured knowledge base — split into **personal** and **work**, combinable on demand. That memory is injected back into your prompts, so the more you use Engram, the more context your AI has.
 
 ```
 dictation ┐
@@ -75,11 +77,11 @@ Everything transcribed accrues into a private knowledge base — no filing, no m
 - **Namespaces** — facts are split into **personal** and **work**; a profile picks which to inject (`memory.namespaces: [work]`, or `[personal, work]` to combine).
 - **Watched sources** — point a namespace at markdown files or a folder (work docs, an Obsidian vault) and they're read straight in.
 - **Apple Notes** *(macOS)* — typed notes are ingested via the official scripting API; handwriting is read from Apple's pre-rendered images and OCR'd locally and offline (swappable engine; see [docs/ocr-sidecar.md](docs/ocr-sidecar.md)).
-- **Background sync** *(macOS)* — Unseen can install its own LaunchAgent to run ingestion + distillation on a schedule, even when the window is closed. No manual setup.
+- **Background sync** *(macOS)* — Engram can install its own LaunchAgent to run ingestion + distillation on a schedule, even when the window is closed. No manual setup.
 
 ## Local-first, with optional iCloud sync
 
-Your data lives on your machine by default. Flip Settings → Memory → **Store data in iCloud** and Unseen moves `memory/`, `knowledge/`, and `sessions/` into your iCloud Drive — so a second Mac sees the same logs and memory after cloning. Append-only logs merge cleanly across devices and a per-day lock keeps two Macs from distilling the same day twice. API keys and settings always stay local. The on-disk format is frozen — see [docs/data-layout.md](docs/data-layout.md).
+Your data lives on your machine by default. Flip Settings → Memory → **Store data in iCloud** and Engram moves `memory/`, `knowledge/`, and `sessions/` into your iCloud Drive — so a second Mac sees the same logs and memory after cloning. Append-only logs merge cleanly across devices and a per-day lock keeps two Macs from distilling the same day twice. API keys and settings always stay local. The on-disk format is frozen — see [docs/data-layout.md](docs/data-layout.md).
 
 ## Install
 
