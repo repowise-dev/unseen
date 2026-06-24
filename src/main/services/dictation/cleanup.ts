@@ -52,25 +52,17 @@ export async function runDictationCleanup(sender: WebContents, rawText: string):
     if (Date.now() - lastEventAt > LLM_STALL_TIMEOUT_MS) controller.abort();
   }, 3000);
 
-  const startedAt = Date.now();
-  console.log(`[dictation] cleanup start — provider=${providerId} model=${request.model}`);
   try {
     const provider = getLlmProvider(providerId);
     const ctx = { ...providerContext(providerId, cfg), signal: controller.signal };
     let out = '';
-    let firstTokenAt = 0;
     for await (const event of provider.stream(request, ctx)) {
       lastEventAt = Date.now();
       if (event.type === 'delta') {
-        if (!firstTokenAt) firstTokenAt = Date.now();
         out += event.text;
         sender.send(IPC.evDictationCleanupDelta, event.text);
       }
     }
-    console.log(
-      `[dictation] cleanup done — ${Date.now() - startedAt}ms total, ` +
-        `${firstTokenAt ? firstTokenAt - startedAt : '-'}ms to first token, ${out.length} chars`,
-    );
     sender.send(IPC.evDictationCleanupDone, { text: out.trim() || text });
   } catch (err) {
     if (controller.signal.aborted) return;

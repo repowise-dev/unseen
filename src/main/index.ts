@@ -57,9 +57,6 @@ app.whenReady().then(async () => {
     void ensureMicAccess().then(callback);
   });
   session.defaultSession.setPermissionCheckHandler((_wc, permission) => allowMedia(permission));
-  if (process.platform === 'darwin') {
-    console.log('[mic] macOS microphone status at launch:', systemPreferences.getMediaAccessStatus('microphone'));
-  }
 
   initProfiles();
   registerIpc();
