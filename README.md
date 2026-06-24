@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="banner.png" alt="Engram — your photographic memory" width="100%" />
+</p>
+
 # Engram — your photographic memory
 
 **Engram is the part of your memory that never forgets.** An open-source, local-first transcription engine with a memory that compounds: dictate into any app, capture every meeting, ingest your notes — and it quietly distills all of it into a private, structured knowledge base that you *and* your AI can draw on.
