@@ -42,6 +42,9 @@ export function createOverlay(): BrowserWindow {
     void overlay.loadFile(join(__dirname, '../renderer/overlay/index.html'));
   }
 
+  overlay.on('restore', () => {
+    overlay?.setSkipTaskbar(true);
+  });
   overlay.on('closed', () => {
     overlay = null;
   });
@@ -55,6 +58,14 @@ export function setPrivacyMode(on: boolean): void {
 
 export function toggleOverlayVisibility(): void {
   if (!overlay) return;
-  if (overlay.isVisible()) overlay.hide();
+  // show() also restores a minimized window.
+  if (overlay.isVisible() && !overlay.isMinimized()) overlay.hide();
   else overlay.show();
+}
+
+export function minimizeOverlay(): void {
+  // Make it restorable from the Dock/app-switcher while minimized, then restore
+  // skipTaskbar when it comes back so it stays out of the way otherwise.
+  overlay?.setSkipTaskbar(false);
+  overlay?.minimize();
 }

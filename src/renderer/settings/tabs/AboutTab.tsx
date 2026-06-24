@@ -15,7 +15,7 @@ export function AboutTab({ settings }: { settings: Settings }): React.JSX.Elemen
   return (
     <div className="about">
       <h2>Unseen {info ? `v${info.version}` : ''}</h2>
-      <p>Open-source real-time meeting copilot.</p>
+      <p>Your photographic memory — open-source, local-first.</p>
       <p>
         <a href="https://github.com/repowise-dev/unseen" target="_blank" rel="noreferrer">
           github.com/repowise-dev/unseen

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useOverlayStore } from './store';
-import { askNow, togglePause } from './controller';
+import { askNow, togglePause, toggleListening, isListening } from './controller';
 import { Transcript } from './components/Transcript';
 import { AnswerFeed } from './components/AnswerFeed';
 
@@ -12,6 +12,7 @@ export function App(): React.JSX.Element {
   const sessionCost = useOverlayStore((s) => s.sessionCost);
   const settings = useOverlayStore((s) => s.settings);
   const setActiveProfile = useOverlayStore((s) => s.setActiveProfile);
+  const [listening, setListening] = useState(isListening());
   const [paused, setPaused] = useState(false);
 
   const privacyOn = settings?.overlay.privacyMode ?? true;
@@ -54,14 +55,34 @@ export function App(): React.JSX.Element {
             {privacyOn ? '🙈' : '👁'}
           </button>
           <button
-            className="ghost-btn"
-            title="Pause/resume listening"
-            onClick={() => setPaused(togglePause())}
+            className={`ghost-btn ${listening ? 'active' : ''}`}
+            title={listening ? 'Stop listening' : 'Start listening'}
+            onClick={() => {
+              const now = toggleListening();
+              setListening(now);
+              if (!now) setPaused(false);
+            }}
           >
-            {paused ? '▶' : '⏸'}
+            {listening ? '⏹ Stop' : '▶ Start'}
           </button>
+          {listening && (
+            <button
+              className="ghost-btn"
+              title="Pause/resume listening"
+              onClick={() => setPaused(togglePause())}
+            >
+              {paused ? '▶' : '⏸'}
+            </button>
+          )}
           <button className="ghost-btn" title="Answer the latest thing said" onClick={askNow}>
             Ask now
+          </button>
+          <button
+            className="ghost-btn"
+            title="Minimize"
+            onClick={() => void window.unseen.overlayMinimize()}
+          >
+            —
           </button>
           <button
             className="ghost-btn"

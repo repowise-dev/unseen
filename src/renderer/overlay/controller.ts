@@ -12,6 +12,9 @@ const INFLIGHT_TIMEOUT_MS = 30_000; // reset a stuck in-flight answer
 
 const transcript = new TranscriptStore();
 let client: SttClient | null = null;
+// The meeting overlay is on-demand: it does NOT listen until the user starts a
+// session (no mic capture, no STT connection, no "reconnecting" churn at idle).
+let listening = false;
 
 let inFlight = false;
 let inFlightSince = 0;
@@ -123,12 +126,31 @@ function settleAnswer(opts: { error?: string; usage?: Usage | null }): void {
 }
 
 export function askNow(): void {
+  if (!listening) return;
   void maybeAnswer({ force: true });
 }
 
 export function togglePause(): boolean {
-  const paused = client?.togglePause() ?? false;
-  return paused;
+  // Pause only makes sense while a session is running.
+  if (!listening) return false;
+  return client?.togglePause() ?? false;
+}
+
+export function isListening(): boolean {
+  return listening;
+}
+
+/** Start / stop a listening session. Returns the new listening state. */
+export function toggleListening(): boolean {
+  if (listening) {
+    listening = false;
+    client?.stop();
+    store().setStatus('idle', 'stopped');
+  } else {
+    listening = true;
+    void client?.start();
+  }
+  return listening;
 }
 
 export async function initController(): Promise<void> {
@@ -156,12 +178,15 @@ export async function initController(): Promise<void> {
       windowChars: profile.transcript?.window_chars ?? next.transcript.windowChars,
       retentionMin: profile.transcript?.retention_min ?? next.transcript.retentionMin,
     });
-    // Mic device, language, diarization, or STT provider changed → reconnect.
+    // Mic device, language, diarization, or STT provider changed → reconnect,
+    // but only if a session is actually running (don't wake an idle overlay).
     const sttConfig = JSON.stringify(next.stt);
     if (sttConfig !== lastSttConfig) {
       lastSttConfig = sttConfig;
-      client?.stop();
-      await client?.start();
+      if (listening) {
+        client?.stop();
+        await client?.start();
+      }
     }
   });
   window.unseen.onProfilesChanged((list) => store().setProfiles(list));
@@ -210,5 +235,6 @@ export async function initController(): Promise<void> {
       void maybeAnswer();
     },
   });
-  await client.start();
+  // On-demand: stay idle until the user presses Start (▶) in the overlay.
+  store().setStatus('idle', 'stopped — press ▶ to start');
 }

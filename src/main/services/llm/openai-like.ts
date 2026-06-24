@@ -87,6 +87,7 @@ export const openaiProvider = makeOpenAiLike({
   staticModels: [
     { id: 'gpt-5.4', label: 'GPT-5.4' },
     { id: 'gpt-5.4-mini', label: 'GPT-5.4 mini (fast/cheap)' },
+    { id: 'gpt-5-mini', label: 'GPT-5 mini (fast/cheap)' },
   ],
 });
 

@@ -1,5 +1,14 @@
 // Core types shared between main, preload, and renderer.
 
+/** Memory namespaces: a personal and a work knowledge space, combinable. */
+export type Namespace = 'personal' | 'work';
+
+/** A markdown file or folder read straight into a memory namespace (6.2). */
+export interface WatchedSource {
+  path: string;
+  ns: Namespace;
+}
+
 export interface Settings {
   llm: {
     provider: string;
@@ -32,6 +41,34 @@ export interface Settings {
     pause: string;
     cycleProfile: string;
     privacyMode: string;
+    /** Toggle system-wide dictation: tap to start, tap again to stop+insert. */
+    dictation: string;
+  };
+  dictation: {
+    enabled: boolean;
+    /** Run the LLM cleanup pass (filler removal, punctuation). Off = insert the
+     *  raw transcription instantly. */
+    cleanup: boolean;
+    /** Model used for the post-dictation cleanup pass (runs on llm.provider). */
+    model: string;
+    /** Front-app names where dictation skips insertion (and Phase 2 logging). */
+    excludeApps: string[];
+    /** Append each dictation to the daily memory log (wired in Phase 2). */
+    logToMemory: boolean;
+  };
+  memory: {
+    /** Watched markdown files/folders read straight into a namespace (6.2). */
+    sources: WatchedSource[];
+    notes: {
+      /** Apple Notes ingestion enabled. */
+      enabled: boolean;
+      /** Namespace for notes whose folder isn't explicitly mapped. */
+      defaultNs: Namespace;
+      /** Map a Notes folder name → namespace. */
+      folderMap: { folder: string; ns: Namespace }[];
+      /** Epoch ms of the last successful ingestion (incremental sync). */
+      lastRunAt: number;
+    };
   };
   transcript: {
     windowChars: number;
@@ -41,6 +78,12 @@ export interface Settings {
     autoSave: boolean;
   };
   activeProfile: string;
+  /**
+   * Root for synced data (memory/, knowledge/, sessions/). Empty = OS userData
+   * (local). Point at an iCloud Drive folder for cross-device sync (Phase 4).
+   * NOTE: settings.json and secrets.json always stay in local userData.
+   */
+  dataDir: string;
   /** First-run wizard completed. */
   onboarded: boolean;
 }
@@ -153,6 +196,8 @@ export interface Profile {
     prompt_label: string;
     files: string[];
   };
+  /** Distilled-memory namespaces to inject as context. Empty/absent = none. */
+  memory?: { namespaces: Namespace[] };
   triggers: {
     auto: boolean;
     detectors: string[];
@@ -174,6 +219,19 @@ export interface ProfileSummary {
 export interface AppInfo {
   version: string;
   platform: string;
+}
+
+// ---- Memory ----
+
+export interface DistillResult {
+  ns: Namespace;
+  day: string;
+  /** log events distilled */
+  events: number;
+  /** new facts added this run (0 means everything was already known) */
+  added: number;
+  /** total facts in the day's namespace file after merge */
+  total: number;
 }
 
 // ---- Sessions ----

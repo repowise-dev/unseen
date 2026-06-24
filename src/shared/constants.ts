@@ -31,6 +31,23 @@ export const DEFAULT_SETTINGS: Settings = {
     pause: 'CommandOrControl+Shift+P',
     cycleProfile: 'CommandOrControl+Shift+]',
     privacyMode: 'CommandOrControl+Shift+H',
+    dictation: 'Control+Space',
+  },
+  dictation: {
+    enabled: true,
+    cleanup: true,
+    model: 'claude-haiku-4-5',
+    excludeApps: [],
+    logToMemory: true,
+  },
+  memory: {
+    sources: [],
+    notes: {
+      enabled: false,
+      defaultNs: 'personal',
+      folderMap: [],
+      lastRunAt: 0,
+    },
   },
   transcript: {
     windowChars: 4000,
@@ -40,6 +57,7 @@ export const DEFAULT_SETTINGS: Settings = {
     autoSave: true,
   },
   activeProfile: 'qa-overlay',
+  dataDir: '',
   onboarded: false,
 };
 

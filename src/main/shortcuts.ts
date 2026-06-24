@@ -3,6 +3,7 @@ import { IPC } from '../shared/ipc-contract';
 import { settings } from './services/settings';
 import { listProfiles } from './services/profiles';
 import { getOverlay, setPrivacyMode, toggleOverlayVisibility } from './windows/overlay';
+import { toggleDictation } from './dictation';
 
 function cycleProfile(): void {
   const profiles = listProfiles();
@@ -22,6 +23,7 @@ export function registerShortcuts(): void {
     [hk.pause, () => getOverlay()?.webContents.send(IPC.evTogglePause)],
     [hk.cycleProfile, cycleProfile],
     [hk.privacyMode, () => setPrivacyMode(!settings().get().overlay.privacyMode)],
+    [hk.dictation, toggleDictation],
   ];
   for (const [accelerator, handler] of bindings) {
     if (!accelerator) continue;

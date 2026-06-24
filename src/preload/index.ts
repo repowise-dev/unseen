@@ -5,7 +5,9 @@ import type {
   AnswerPayload,
   AppInfo,
   DeepPartial,
+  DistillResult,
   ModelInfo,
+  Namespace,
   Profile,
   ProfileSummary,
   ProviderInfo,
@@ -44,13 +46,54 @@ const api = {
     ipcRenderer.invoke(IPC.providerVerify, kind, providerId),
 
   sttDescriptor: (): Promise<SttDescriptor> => ipcRenderer.invoke(IPC.sttDescriptor),
+  sttDescriptorDictation: (): Promise<SttDescriptor> =>
+    ipcRenderer.invoke(IPC.sttDescriptorDictation),
 
   answerStart: (payload: AnswerPayload): Promise<{ ok: boolean }> =>
     ipcRenderer.invoke(IPC.answerStart, payload),
   answerCancel: (): Promise<void> => ipcRenderer.invoke(IPC.answerCancel),
 
+  // dictation
+  dictationCleanup: (rawText: string): Promise<{ ok: boolean }> =>
+    ipcRenderer.invoke(IPC.dictationCleanup, rawText),
+  dictationInsert: (text: string): Promise<{ pasted: boolean; reason?: string }> =>
+    ipcRenderer.invoke(IPC.dictationInsert, text),
+  dictationCancel: (): Promise<void> => ipcRenderer.invoke(IPC.dictationCancel),
+  permAccessibility: (): Promise<boolean> => ipcRenderer.invoke(IPC.permAccessibility),
+
+  // memory
+  memoryDistill: (): Promise<DistillResult[]> => ipcRenderer.invoke(IPC.memoryDistill),
+  memoryAddSource: (ns: Namespace): Promise<Settings> =>
+    ipcRenderer.invoke(IPC.memoryAddSource, ns),
+  memoryRemoveSource: (path: string, ns: Namespace): Promise<Settings> =>
+    ipcRenderer.invoke(IPC.memoryRemoveSource, path, ns),
+  notesSyncNow: (): Promise<{ typed: number; handwritten: number; skippedNoOcr: number }> =>
+    ipcRenderer.invoke(IPC.notesSyncNow),
+  launchAgentStatus: (): Promise<{ installed: boolean }> =>
+    ipcRenderer.invoke(IPC.launchAgentStatus),
+  launchAgentInstall: (): Promise<{ ok: boolean; error?: string }> =>
+    ipcRenderer.invoke(IPC.launchAgentInstall),
+  launchAgentUninstall: (): Promise<{ ok: boolean; error?: string }> =>
+    ipcRenderer.invoke(IPC.launchAgentUninstall),
+  dataDirInfo: (): Promise<{
+    current: string;
+    isDefault: boolean;
+    local: string;
+    iCloud: string;
+  }> => ipcRenderer.invoke(IPC.dataDirInfo),
+  dataDirSet: (target: string): Promise<Settings> => ipcRenderer.invoke(IPC.dataDirSet, target),
+  onDictationStart: (cb: () => void) => ipcRenderer.on(IPC.evDictationStart, () => cb()),
+  onDictationStop: (cb: () => void) => ipcRenderer.on(IPC.evDictationStop, () => cb()),
+  onDictationCleanupDelta: (cb: (text: string) => void) =>
+    ipcRenderer.on(IPC.evDictationCleanupDelta, (_e, t: string) => cb(t)),
+  onDictationCleanupDone: (cb: (done: { text: string }) => void) =>
+    ipcRenderer.on(IPC.evDictationCleanupDone, (_e, d: { text: string }) => cb(d)),
+  onDictationCleanupError: (cb: (err: string) => void) =>
+    ipcRenderer.on(IPC.evDictationCleanupError, (_e, err: string) => cb(err)),
+
   openSettings: (): Promise<void> => ipcRenderer.invoke(IPC.openSettings),
   setPrivacyMode: (on: boolean): Promise<void> => ipcRenderer.invoke(IPC.setPrivacyMode, on),
+  overlayMinimize: (): Promise<void> => ipcRenderer.invoke(IPC.overlayMinimize),
   appInfo: (): Promise<AppInfo> => ipcRenderer.invoke(IPC.appInfo),
   quit: (): Promise<void> => ipcRenderer.invoke(IPC.quit),
 

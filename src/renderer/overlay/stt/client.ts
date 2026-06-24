@@ -135,9 +135,22 @@ export class SttClient {
           channelCount: 1,
         },
       });
-    } catch {
-      // Transient (device busy) or denial — retry either way; if the user
-      // denied, this self-heals the moment they grant access.
+    } catch (err) {
+      const e = err as { name?: string; message?: string };
+      console.error('[stt] getUserMedia failed:', e.name, e.message);
+      if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
+        // Permanent until the user acts — surface it instead of looping silently.
+        this.opts.onStatus({
+          state: 'error',
+          message: 'Microphone blocked — allow it in System Settings → Privacy → Microphone, then Start again.',
+        });
+        return;
+      }
+      if (e.name === 'NotFoundError') {
+        this.opts.onStatus({ state: 'error', message: 'No microphone found.' });
+        return;
+      }
+      // Transient (device busy) — retry.
       this.scheduleReconnect(3000);
       return;
     }
@@ -175,14 +188,27 @@ export class SttClient {
     ws.onerror = () => {
       // onclose always follows and owns recovery — avoid double reconnects.
     };
-    ws.onclose = () => {
+    ws.onclose = (ev) => {
       try {
         recorder.stop();
       } catch {
         /* already stopped */
       }
-      if (this._paused) this.opts.onStatus({ state: 'paused' });
-      else this.scheduleReconnect(2000);
+      console.warn(`[stt] socket closed (code ${ev.code}${ev.reason ? `, ${ev.reason}` : ''})`);
+      if (this._paused) {
+        this.opts.onStatus({ state: 'paused' });
+        return;
+      }
+      // Deepgram signals auth/param errors with 4xxx (and 1008). Those won't
+      // self-heal by retrying — surface them instead of looping forever.
+      if (ev.code === 1008 || (ev.code >= 4000 && ev.code <= 4999)) {
+        this.opts.onStatus({
+          state: 'error',
+          message: `Transcription rejected (code ${ev.code}${ev.reason ? `: ${ev.reason}` : ''}) — check your Deepgram key in Settings.`,
+        });
+        return;
+      }
+      this.scheduleReconnect(2000);
     };
 
     if (descriptor.keepAlive) {
