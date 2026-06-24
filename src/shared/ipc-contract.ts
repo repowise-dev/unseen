@@ -33,6 +33,9 @@ export const IPC = {
   dictationCancel: 'dictation:cancel', // abort session, hide HUD
   permAccessibility: 'perm:accessibility', // check/prompt macOS Accessibility
 
+  // memory
+  memoryDistill: 'memory:distill', // run distillation for today (on-demand)
+
   // sessions
   sessionFinal: 'session:final', // fire-and-forget (ipcRenderer.send)
   sessionsList: 'sessions:list',

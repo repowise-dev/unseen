@@ -5,6 +5,7 @@ import type {
   AnswerPayload,
   AppInfo,
   DeepPartial,
+  DistillResult,
   ModelInfo,
   Profile,
   ProfileSummary,
@@ -58,6 +59,9 @@ const api = {
     ipcRenderer.invoke(IPC.dictationInsert, text),
   dictationCancel: (): Promise<void> => ipcRenderer.invoke(IPC.dictationCancel),
   permAccessibility: (): Promise<boolean> => ipcRenderer.invoke(IPC.permAccessibility),
+
+  // memory
+  memoryDistill: (): Promise<DistillResult[]> => ipcRenderer.invoke(IPC.memoryDistill),
   onDictationStart: (cb: () => void) => ipcRenderer.on(IPC.evDictationStart, () => cb()),
   onDictationStop: (cb: () => void) => ipcRenderer.on(IPC.evDictationStop, () => cb()),
   onDictationCleanupDelta: (cb: (text: string) => void) =>

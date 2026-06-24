@@ -12,6 +12,8 @@ export interface KnowledgeInput {
 export interface BuildAnswerOpts {
   profile: Profile;
   knowledge: KnowledgeInput[];
+  /** Distilled memory facts per namespace; injected as cacheable blocks. */
+  memory?: KnowledgeInput[];
   settings: Settings;
   fullTranscript: string;
   newSegment: string;
@@ -63,6 +65,10 @@ export function buildAnswerRequest(opts: BuildAnswerOpts): LlmRequest {
     },
     ...knowledge.map((k) => ({
       text: `${profile.knowledge.prompt_label} — ${k.name}:\n${k.text}`,
+      cacheable: true,
+    })),
+    ...(opts.memory ?? []).map((m) => ({
+      text: `MEMORY (${m.name}) — distilled facts about the user:\n${m.text}`,
       cacheable: true,
     })),
   ];

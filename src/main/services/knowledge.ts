@@ -1,8 +1,10 @@
 import { app, dialog } from 'electron';
 import { isAbsolute, join, basename } from 'path';
-import { readFileSync, statSync, existsSync, mkdirSync, copyFileSync } from 'fs';
-import type { Profile } from '../../shared/types';
+import { readFileSync, readdirSync, statSync, existsSync, mkdirSync, copyFileSync } from 'fs';
+import type { Namespace, Profile } from '../../shared/types';
 import { KNOWLEDGE_FILE_MAX_BYTES } from '../../shared/constants';
+import { factsDir } from './paths';
+import { renderFactsBlock, type Fact } from './memory/core';
 
 export interface KnowledgeFile {
   name: string;
@@ -36,6 +38,43 @@ export async function importKnowledgeFiles(): Promise<string[]> {
     }
   }
   return names;
+}
+
+/**
+ * Load distilled memory facts for the given namespaces as knowledge blocks —
+ * one block per namespace, the accumulating fact set across all days, deduped
+ * by stable id (latest lastSeen wins). This is how the "graph" feeds prompts.
+ */
+export function loadMemoryFacts(namespaces: Namespace[]): KnowledgeFile[] {
+  const out: KnowledgeFile[] = [];
+  for (const ns of namespaces) {
+    const dir = factsDir(ns);
+    let files: string[];
+    try {
+      files = readdirSync(dir)
+        .filter((f) => f.endsWith('.json'))
+        .sort();
+    } catch {
+      continue;
+    }
+    const byId = new Map<string, Fact>();
+    for (const file of files) {
+      try {
+        const parsed = JSON.parse(readFileSync(join(dir, file), 'utf8'));
+        if (!Array.isArray(parsed)) continue;
+        for (const f of parsed as Fact[]) {
+          const prev = byId.get(f.id);
+          if (!prev || f.lastSeen > prev.lastSeen) byId.set(f.id, f);
+        }
+      } catch {
+        /* skip malformed facts file */
+      }
+    }
+    if (byId.size === 0) continue;
+    const text = renderFactsBlock([...byId.values()]).slice(0, KNOWLEDGE_FILE_MAX_BYTES);
+    out.push({ name: ns, text });
+  }
+  return out;
 }
 
 export function loadKnowledge(profile: Profile): KnowledgeFile[] {

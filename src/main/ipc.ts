@@ -25,9 +25,12 @@ import { getSttProvider, listSttProviders } from './services/stt/registry';
 import { openSettingsWindow } from './windows/settings';
 import { setPrivacyMode } from './windows/overlay';
 import { runDictationCleanup } from './services/dictation/cleanup';
-import { insertText, isFrontAppExcluded } from './services/insertion';
+import { insertText } from './services/insertion';
+import { frontmostApp } from './services/insertion/paste-macos';
 import { isAccessibilityTrusted } from './permissions';
 import { finishDictation } from './dictation';
+import { appendLogEvent } from './services/memory/log';
+import { distillToday } from './services/memory/distill';
 
 export function registerIpc(): void {
   ipcMain.handle(IPC.settingsGet, () => settings().get());
@@ -97,18 +100,33 @@ export function registerIpc(): void {
   // Insert cleaned text at the cursor (skips excluded front apps). After this,
   // the renderer reports done via dictationCancel to reset state + hide HUD.
   ipcMain.handle(IPC.dictationInsert, async (_e, text: string) => {
-    const { excludeApps } = settings().get().dictation;
-    if (await isFrontAppExcluded(excludeApps)) {
+    const cfg = settings().get();
+    const front = await frontmostApp();
+    if (front && cfg.dictation.excludeApps.some((a) => a.toLowerCase() === front.toLowerCase())) {
+      // Excluded app: skip insertion AND logging (Phase 1 privacy).
       return { pasted: false, reason: 'excluded-app' };
     }
     if (!isAccessibilityTrusted(false)) {
       isAccessibilityTrusted(true); // prompt
       return { pasted: false, reason: 'no-accessibility' };
     }
-    return insertText(text);
+    const result = await insertText(text);
+    // Feed the daily memory log (Phase 2). logToMemory gates this.
+    if (cfg.dictation.logToMemory && text.trim()) {
+      appendLogEvent({
+        t: Date.now(),
+        kind: 'dictation',
+        ns: 'personal',
+        app: front ?? undefined,
+        text: text.trim(),
+      });
+    }
+    return result;
   });
   ipcMain.handle(IPC.dictationCancel, () => finishDictation());
   ipcMain.handle(IPC.permAccessibility, () => isAccessibilityTrusted(true));
+
+  ipcMain.handle(IPC.memoryDistill, () => distillToday());
 
   ipcMain.handle(IPC.openSettings, () => openSettingsWindow());
   ipcMain.handle(IPC.setPrivacyMode, (_e, on: boolean) => setPrivacyMode(on));
@@ -119,6 +137,10 @@ export function registerIpc(): void {
   // Sessions: transcript finals arrive fire-and-forget from the overlay.
   ipcMain.on(IPC.sessionFinal, (_e, ev: { text: string; speaker: number }) => {
     recordEvent({ t: Date.now(), type: 'final', text: ev.text, speaker: ev.speaker });
+    // Meeting transcript also feeds the daily memory log (Phase 2).
+    if (ev.text.trim()) {
+      appendLogEvent({ t: Date.now(), kind: 'meeting', ns: 'personal', text: ev.text.trim() });
+    }
   });
   ipcMain.handle(IPC.sessionsList, () => listSessions());
   ipcMain.handle(IPC.sessionsExport, (_e, id: string) => exportSession(id));

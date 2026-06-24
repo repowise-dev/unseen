@@ -1,5 +1,5 @@
 import { clipboard, Notification } from 'electron';
-import { pasteKeystroke, frontmostApp } from './paste-macos';
+import { pasteKeystroke } from './paste-macos';
 
 const delay = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
 
@@ -36,12 +36,4 @@ export async function insertText(text: string): Promise<InsertResult> {
     }).show();
     return { pasted: false, reason };
   }
-}
-
-/** Is the frontmost app on the user's exclude list? Best-effort. */
-export async function isFrontAppExcluded(excludeApps: string[]): Promise<boolean> {
-  if (excludeApps.length === 0) return false;
-  const front = await frontmostApp();
-  if (!front) return false;
-  return excludeApps.some((a) => a.toLowerCase() === front.toLowerCase());
 }

@@ -5,10 +5,11 @@ import { ProvidersTab } from './tabs/ProvidersTab';
 import { AudioTab } from './tabs/AudioTab';
 import { ProfilesTab } from './tabs/ProfilesTab';
 import { SessionsTab } from './tabs/SessionsTab';
+import { MemoryTab } from './tabs/MemoryTab';
 import { AboutTab } from './tabs/AboutTab';
 import { Wizard } from './Wizard';
 
-const TABS = ['Providers', 'Audio', 'Profiles', 'Sessions', 'About'] as const;
+const TABS = ['Providers', 'Audio', 'Profiles', 'Sessions', 'Memory', 'About'] as const;
 type Tab = (typeof TABS)[number];
 
 export interface TabProps {
@@ -70,6 +71,7 @@ export function App(): React.JSX.Element {
         {tab === 'Audio' && <AudioTab settings={settings} update={update} />}
         {tab === 'Profiles' && <ProfilesTab settings={settings} update={update} />}
         {tab === 'Sessions' && <SessionsTab settings={settings} update={update} />}
+        {tab === 'Memory' && <MemoryTab settings={settings} update={update} />}
         {tab === 'About' && <AboutTab settings={settings} />}
       </main>
     </div>

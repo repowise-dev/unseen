@@ -4,7 +4,7 @@ import { IPC } from '../../../shared/ipc-contract';
 import { LLM_STALL_TIMEOUT_MS } from '../../../shared/constants';
 import { settings } from '../settings';
 import { getActiveProfile } from '../profiles';
-import { loadKnowledge } from '../knowledge';
+import { loadKnowledge, loadMemoryFacts } from '../knowledge';
 import { buildAnswerRequest } from '../prompt-builder';
 import { getLlmProvider, providerContext } from './registry';
 import { estimateCost } from './prices';
@@ -43,6 +43,7 @@ export async function runAnswer(sender: WebContents, payload: AnswerPayload): Pr
   const request: LlmRequest = buildAnswerRequest({
     profile,
     knowledge: loadKnowledge(profile),
+    memory: loadMemoryFacts(profile.memory?.namespaces ?? []),
     settings: cfg,
     ...payload,
   });

@@ -1,5 +1,8 @@
 // Core types shared between main, preload, and renderer.
 
+/** Memory namespaces: a personal and a work knowledge space, combinable. */
+export type Namespace = 'personal' | 'work';
+
 export interface Settings {
   llm: {
     provider: string;
@@ -164,6 +167,8 @@ export interface Profile {
     prompt_label: string;
     files: string[];
   };
+  /** Distilled-memory namespaces to inject as context. Empty/absent = none. */
+  memory?: { namespaces: Namespace[] };
   triggers: {
     auto: boolean;
     detectors: string[];
@@ -185,6 +190,19 @@ export interface ProfileSummary {
 export interface AppInfo {
   version: string;
   platform: string;
+}
+
+// ---- Memory ----
+
+export interface DistillResult {
+  ns: Namespace;
+  day: string;
+  /** log events distilled */
+  events: number;
+  /** new facts added this run (0 means everything was already known) */
+  added: number;
+  /** total facts in the day's namespace file after merge */
+  total: number;
 }
 
 // ---- Sessions ----

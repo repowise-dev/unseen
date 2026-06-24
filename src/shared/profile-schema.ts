@@ -45,6 +45,11 @@ export const ProfileSchema = z.object({
       debounce_ms: 1500,
       min_chars: 8,
     }),
+  memory: z
+    .object({
+      namespaces: z.array(z.enum(['personal', 'work'])).default([]),
+    })
+    .optional(),
   transcript: z
     .object({
       window_chars: z.number().int().positive().optional(),
