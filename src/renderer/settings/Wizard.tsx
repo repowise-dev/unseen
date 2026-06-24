@@ -13,6 +13,7 @@ export function Wizard({ settings, update }: TabProps): React.JSX.Element {
   const [llmKey, setLlmKey] = useState('');
   const [verify, setVerify] = useState<VerifyResult | null>(null);
   const [micState, setMicState] = useState<'untested' | 'ok' | 'denied'>('untested');
+  const [a11yState, setA11yState] = useState<'untested' | 'ok' | 'denied'>('untested');
 
   useEffect(() => {
     void window.unseen.providersList().then((p) => setProviders(p.llm));
@@ -213,11 +214,30 @@ export function Wizard({ settings, update }: TabProps): React.JSX.Element {
                 </div>
               )}
             </div>
+            <div className="field">
+              <label>Dictation (talk into any app)</label>
+              <p className="hint" style={{ marginBottom: 8 }}>
+                Press <kbd>⌘⇧D</kbd> in any app to dictate; press it again to insert cleaned text at
+                the cursor. This needs <b>Accessibility</b> permission so Unseen can paste for you.
+              </p>
+              <button
+                className="btn secondary"
+                onClick={async () => setA11yState((await window.unseen.permAccessibility()) ? 'ok' : 'denied')}
+              >
+                {a11yState === 'ok' ? '✓ Accessibility granted' : 'Grant Accessibility access'}
+              </button>
+              {a11yState === 'denied' && (
+                <div className="verify bad">
+                  ✗ Not yet granted — enable Unseen in System Settings → Privacy &amp; Security →
+                  Accessibility, then re-check.
+                </div>
+              )}
+            </div>
             <p className="hint">
               The floating panel is already running. Useful keys:{' '}
               <kbd>⌘⇧\</kbd> hide · <kbd>⌘⇧Space</kbd> ask now · <kbd>⌘⇧P</kbd> pause ·{' '}
-              <kbd>⌘⇧H</kbd> privacy mode. The 🙈 icon means the panel is invisible to screen
-              shares.
+              <kbd>⌘⇧H</kbd> privacy mode · <kbd>⌘⇧D</kbd> dictate. The 🙈 icon means the panel is
+              invisible to screen shares.
             </p>
             <div className="row wizard-nav">
               <button className="btn" onClick={finish}>Start using Unseen</button>
