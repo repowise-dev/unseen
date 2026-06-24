@@ -32,6 +32,17 @@ export interface Settings {
     pause: string;
     cycleProfile: string;
     privacyMode: string;
+    /** Toggle system-wide dictation: tap to start, tap again to stop+insert. */
+    dictation: string;
+  };
+  dictation: {
+    enabled: boolean;
+    /** Model used for the post-dictation cleanup pass (runs on llm.provider). */
+    model: string;
+    /** Front-app names where dictation skips insertion (and Phase 2 logging). */
+    excludeApps: string[];
+    /** Append each dictation to the daily memory log (wired in Phase 2). */
+    logToMemory: boolean;
   };
   transcript: {
     windowChars: number;

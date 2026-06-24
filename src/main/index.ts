@@ -3,6 +3,7 @@ import { app, BrowserWindow } from 'electron';
 import { registerIpc } from './ipc';
 import { registerShortcuts, unregisterShortcuts } from './shortcuts';
 import { createOverlay } from './windows/overlay';
+import { createDictationHud } from './windows/dictation-hud';
 import { openSettingsWindow } from './windows/settings';
 import { initProfiles, disposeProfiles } from './services/profiles';
 import { getSecret } from './services/secrets';
@@ -12,6 +13,9 @@ app.whenReady().then(() => {
   initProfiles();
   registerIpc();
   createOverlay();
+  // Create the dictation HUD hidden at startup so its controller is already
+  // listening when the hotkey fires (no renderer-load race).
+  createDictationHud();
   registerShortcuts();
 
   // First run (wizard not completed) or missing transcription key:

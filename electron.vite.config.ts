@@ -16,6 +16,7 @@ export default defineConfig({
         input: {
           overlay: resolve(__dirname, 'src/renderer/overlay/index.html'),
           settings: resolve(__dirname, 'src/renderer/settings/index.html'),
+          dictation: resolve(__dirname, 'src/renderer/dictation/index.html'),
         },
       },
     },

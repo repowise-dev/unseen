@@ -24,6 +24,10 @@ import { runAnswer, cancelAnswer } from './services/llm/run-answer';
 import { getSttProvider, listSttProviders } from './services/stt/registry';
 import { openSettingsWindow } from './windows/settings';
 import { setPrivacyMode } from './windows/overlay';
+import { runDictationCleanup } from './services/dictation/cleanup';
+import { insertText, isFrontAppExcluded } from './services/insertion';
+import { isAccessibilityTrusted } from './permissions';
+import { finishDictation } from './dictation';
 
 export function registerIpc(): void {
   ipcMain.handle(IPC.settingsGet, () => settings().get());
@@ -68,12 +72,43 @@ export function registerIpc(): void {
     return getSttProvider(cfg.stt.provider).descriptor(cfg);
   });
 
+  // Dictation STT: single speaker (no diarization) + snappier endpointing so
+  // finals land fast after the user stops talking.
+  ipcMain.handle(IPC.sttDescriptorDictation, () => {
+    const cfg = settings().get();
+    return getSttProvider(cfg.stt.provider).descriptor({
+      ...cfg,
+      stt: { ...cfg.stt, diarize: false, endpointingMs: Math.min(cfg.stt.endpointingMs, 150) },
+    });
+  });
+
   ipcMain.handle(IPC.answerStart, (event, payload: AnswerPayload) => {
     // Fire and forget; results stream back as events to the caller.
     void runAnswer(event.sender, payload);
     return { ok: true };
   });
   ipcMain.handle(IPC.answerCancel, () => cancelAnswer());
+
+  // Dictation: renderer streams the raw STT buffer here for the cleanup pass.
+  ipcMain.handle(IPC.dictationCleanup, (event, rawText: string) => {
+    void runDictationCleanup(event.sender, rawText);
+    return { ok: true };
+  });
+  // Insert cleaned text at the cursor (skips excluded front apps). After this,
+  // the renderer reports done via dictationCancel to reset state + hide HUD.
+  ipcMain.handle(IPC.dictationInsert, async (_e, text: string) => {
+    const { excludeApps } = settings().get().dictation;
+    if (await isFrontAppExcluded(excludeApps)) {
+      return { pasted: false, reason: 'excluded-app' };
+    }
+    if (!isAccessibilityTrusted(false)) {
+      isAccessibilityTrusted(true); // prompt
+      return { pasted: false, reason: 'no-accessibility' };
+    }
+    return insertText(text);
+  });
+  ipcMain.handle(IPC.dictationCancel, () => finishDictation());
+  ipcMain.handle(IPC.permAccessibility, () => isAccessibilityTrusted(true));
 
   ipcMain.handle(IPC.openSettings, () => openSettingsWindow());
   ipcMain.handle(IPC.setPrivacyMode, (_e, on: boolean) => setPrivacyMode(on));
