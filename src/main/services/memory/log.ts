@@ -1,7 +1,7 @@
 import { join } from 'path';
 import { appendFileSync, readFileSync, existsSync } from 'fs';
 import { logDir } from '../paths';
-import { dayKey, parseLogLine, type LogEvent } from './core';
+import { dayKey, mergeLogEvents, parseLogLine, type LogEvent } from './core';
 
 // Append-only daily event log. Every dictation / meeting final / ingested note
 // becomes one JSONL line in the day's file. Append-only is the whole point:
@@ -21,7 +21,11 @@ export function appendLogEvent(ev: LogEvent): void {
   }
 }
 
-/** Read and parse all events for a day (malformed lines skipped). */
+/**
+ * Read a day's events, merged for sync safety: malformed lines skipped, then
+ * sorted by t and deduped by (t, kind, text) so two devices appending the same
+ * day yield one clean log.
+ */
 export function readDay(day: string): LogEvent[] {
   const path = dayPath(day);
   if (!existsSync(path)) return [];
@@ -30,5 +34,5 @@ export function readDay(day: string): LogEvent[] {
     const ev = parseLogLine(line);
     if (ev) out.push(ev);
   }
-  return out;
+  return mergeLogEvents(out);
 }

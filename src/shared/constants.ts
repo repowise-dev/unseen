@@ -56,6 +56,7 @@ export const DEFAULT_SETTINGS: Settings = {
     autoSave: true,
   },
   activeProfile: 'qa-overlay',
+  dataDir: '',
   onboarded: false,
 };
 

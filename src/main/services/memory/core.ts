@@ -157,6 +157,30 @@ export function parseFactsJson(text: string): RawFact[] {
   return out;
 }
 
+/**
+ * Merge a day's log events for cross-device sync (Phase 4): sort by timestamp
+ * and dedupe by (t, kind, text). iCloud may append the same lines from two Macs;
+ * append-only JSONL means a clean merge is just this. Stable + idempotent.
+ */
+export function mergeLogEvents(events: LogEvent[]): LogEvent[] {
+  const seen = new Set<string>();
+  const out: LogEvent[] = [];
+  for (const e of events) {
+    const key = `${e.t}|${e.kind}|${e.text}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(e);
+  }
+  out.sort((a, b) => a.t - b.t);
+  return out;
+}
+
+/** Single-distiller rule (Phase 4): a lock is stale (reclaimable) once older
+ *  than ttlMs, so a crashed distiller never wedges a day forever. */
+export function isLockStale(lockTime: number, now: number, ttlMs = 60 * 60 * 1000): boolean {
+  return now - lockTime > ttlMs;
+}
+
 /** Map an Apple Notes folder name to a namespace via the user's rules. */
 export function mapNamespace(
   folder: string | undefined,

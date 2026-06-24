@@ -75,6 +75,12 @@ export interface Settings {
     autoSave: boolean;
   };
   activeProfile: string;
+  /**
+   * Root for synced data (memory/, knowledge/, sessions/). Empty = OS userData
+   * (local). Point at an iCloud Drive folder for cross-device sync (Phase 4).
+   * NOTE: settings.json and secrets.json always stay in local userData.
+   */
+  dataDir: string;
   /** First-run wizard completed. */
   onboarded: boolean;
 }

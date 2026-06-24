@@ -10,12 +10,24 @@ export function MemoryTab({ settings, update }: TabProps): React.JSX.Element {
   const [syncing, setSyncing] = useState(false);
   const [syncMsg, setSyncMsg] = useState<string | null>(null);
   const [agentInstalled, setAgentInstalled] = useState(false);
+  const [dataDir, setDataDir] = useState<{
+    current: string;
+    isDefault: boolean;
+    local: string;
+    iCloud: string;
+  } | null>(null);
   const d = settings.dictation;
   const notes = settings.memory.notes;
 
   useEffect(() => {
     void window.unseen.launchAgentStatus().then((s) => setAgentInstalled(s.installed));
+    void window.unseen.dataDirInfo().then(setDataDir);
   }, []);
+
+  const switchDataDir = async (target: string): Promise<void> => {
+    await window.unseen.dataDirSet(target);
+    setDataDir(await window.unseen.dataDirInfo());
+  };
 
   const distill = async (): Promise<void> => {
     setDistilling(true);
@@ -214,6 +226,39 @@ export function MemoryTab({ settings, update }: TabProps): React.JSX.Element {
           Installs a macOS LaunchAgent that runs hourly and at 23:30 — even when the app window is
           closed. No manual setup.
         </div>
+      </div>
+
+      <h2 style={{ marginTop: 24 }}>Data location & sync</h2>
+      <div className="field">
+        <label>Where your data lives</label>
+        <div className="hint" style={{ marginBottom: 8 }}>
+          Storing data in iCloud Drive lets a second Mac see the same logs and memory after cloning.
+          Switching copies your existing data across. Secrets always stay local.
+        </div>
+        {dataDir && (
+          <>
+            <div style={{ fontSize: 12, wordBreak: 'break-all', marginBottom: 8 }}>
+              Current: <code>{dataDir.current}</code>
+              {dataDir.isDefault ? ' (local)' : ' (custom)'}
+            </div>
+            <div className="row" style={{ gap: 8 }}>
+              <button
+                className="btn"
+                disabled={dataDir.current === dataDir.iCloud}
+                onClick={() => void switchDataDir(dataDir.iCloud)}
+              >
+                Store data in iCloud
+              </button>
+              <button
+                className="btn secondary"
+                disabled={dataDir.isDefault}
+                onClick={() => void switchDataDir('')}
+              >
+                Use local storage
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

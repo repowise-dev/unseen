@@ -1,6 +1,13 @@
-import { join } from 'path';
-import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync } from 'fs';
-import { dirname } from 'path';
+import { join, dirname } from 'path';
+import {
+  readFileSync,
+  writeFileSync,
+  existsSync,
+  mkdirSync,
+  renameSync,
+  rmSync,
+} from 'fs';
+import { hostname } from 'os';
 import type { DistillResult, LlmRequest } from '../../../shared/types';
 import { LLM_STALL_TIMEOUT_MS } from '../../../shared/constants';
 import { settings } from '../settings';
@@ -9,6 +16,7 @@ import { factsDir } from '../paths';
 import { readDay } from './log';
 import {
   dayKey,
+  isLockStale,
   mergeFacts,
   parseFactsJson,
   type Fact,
@@ -38,6 +46,37 @@ Be conservative: skip anything you wouldn't want to remember next month. Use the
 
 function factsPath(ns: Namespace, day: string): string {
   return join(factsDir(ns), `${day}.json`);
+}
+
+function lockPath(ns: Namespace, day: string): string {
+  return join(factsDir(ns), `${day}.lock`);
+}
+
+/**
+ * Single-distiller rule (Phase 4): acquire a per-day lock so two synced Macs
+ * don't distill the same day at once. Honors a stale lock (crashed distiller).
+ * Returns false if another live device holds it.
+ */
+function acquireLock(ns: Namespace, day: string): boolean {
+  const path = lockPath(ns, day);
+  if (existsSync(path)) {
+    try {
+      const lock = JSON.parse(readFileSync(path, 'utf8')) as { device: string; t: number };
+      if (lock.device !== hostname() && !isLockStale(lock.t, Date.now())) return false;
+    } catch {
+      /* unreadable lock → treat as stale and reclaim */
+    }
+  }
+  writeFileSync(path, JSON.stringify({ device: hostname(), t: Date.now() }));
+  return true;
+}
+
+function releaseLock(ns: Namespace, day: string): void {
+  try {
+    rmSync(lockPath(ns, day));
+  } catch {
+    /* already gone */
+  }
 }
 
 function readFacts(ns: Namespace, day: string): Fact[] {
@@ -92,14 +131,29 @@ export async function distillDay(day: string, ns: Namespace): Promise<DistillRes
   const events = readDay(day).filter((e) => e.ns === ns);
   if (events.length === 0) return { ns, day, events: 0, added: 0, total: readFacts(ns, day).length };
 
-  const text = events.map((e) => `[${e.kind}] ${e.text}`).join('\n');
-  const raw = parseFactsJson(await callLlm(text));
+  // Single-distiller rule: bail if another device is distilling this day.
+  if (!acquireLock(ns, day)) {
+    console.log(`[memory] ${ns} ${day} locked by another device — skipping`);
+    return { ns, day, events: events.length, added: 0, total: readFacts(ns, day).length };
+  }
+  try {
+    const text = events.map((e) => `[${e.kind}] ${e.text}`).join('\n');
+    const raw = parseFactsJson(await callLlm(text));
 
-  const before = readFacts(ns, day);
-  const beforeCount = before.length;
-  const merged = mergeFacts(before, raw, Date.now());
-  writeFacts(ns, day, merged);
-  return { ns, day, events: events.length, added: merged.length - beforeCount, total: merged.length };
+    const before = readFacts(ns, day);
+    const beforeCount = before.length;
+    const merged = mergeFacts(before, raw, Date.now());
+    writeFacts(ns, day, merged);
+    return {
+      ns,
+      day,
+      events: events.length,
+      added: merged.length - beforeCount,
+      total: merged.length,
+    };
+  } finally {
+    releaseLock(ns, day);
+  }
 }
 
 /** Distill today across all namespaces (on-demand "Distill now" + scheduler). */

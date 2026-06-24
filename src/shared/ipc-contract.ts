@@ -41,6 +41,8 @@ export const IPC = {
   launchAgentStatus: 'launch-agent:status',
   launchAgentInstall: 'launch-agent:install',
   launchAgentUninstall: 'launch-agent:uninstall',
+  dataDirInfo: 'data-dir:info', // current root + iCloud path
+  dataDirSet: 'data-dir:set', // switch root (migrates existing data)
 
   // sessions
   sessionFinal: 'session:final', // fire-and-forget (ipcRenderer.send)

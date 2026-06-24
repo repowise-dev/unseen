@@ -31,6 +31,7 @@ import { isAccessibilityTrusted } from './permissions';
 import { finishDictation } from './dictation';
 import { appendLogEvent } from './services/memory/log';
 import { distillToday } from './services/memory/distill';
+import { dataDir, userDataDir, iCloudDir, migrateDataDir } from './services/paths';
 import { ingestNotes } from './services/notes/ingest';
 import {
   launchAgentInstalled,
@@ -161,6 +162,23 @@ export function registerIpc(): void {
   ipcMain.handle(IPC.launchAgentStatus, () => ({ installed: launchAgentInstalled() }));
   ipcMain.handle(IPC.launchAgentInstall, () => installLaunchAgent());
   ipcMain.handle(IPC.launchAgentUninstall, () => uninstallLaunchAgent());
+
+  // Configurable data dir / iCloud sync (Phase 4).
+  ipcMain.handle(IPC.dataDirInfo, () => ({
+    current: dataDir(),
+    isDefault: !settings().get().dataDir,
+    local: userDataDir(),
+    iCloud: iCloudDir(),
+  }));
+  ipcMain.handle(IPC.dataDirSet, (_e, target: string) => {
+    const old = dataDir();
+    const resolved = target || userDataDir();
+    if (resolved !== old) {
+      const copied = migrateDataDir(old, resolved);
+      console.log(`[paths] migrated [${copied.join(', ')}] from ${old} → ${resolved}`);
+    }
+    return settings().set({ dataDir: target });
+  });
 
   ipcMain.handle(IPC.openSettings, () => openSettingsWindow());
   ipcMain.handle(IPC.setPrivacyMode, (_e, on: boolean) => setPrivacyMode(on));

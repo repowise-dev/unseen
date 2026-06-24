@@ -2,12 +2,15 @@ import { describe, it, expect } from 'vitest';
 import {
   dayKey,
   factKey,
+  isLockStale,
   mapNamespace,
   mergeFacts,
+  mergeLogEvents,
   parseFactsJson,
   parseLogLine,
   renderFactsBlock,
   type Fact,
+  type LogEvent,
   type RawFact,
 } from '../src/main/services/memory/core';
 
@@ -91,6 +94,32 @@ describe('mergeFacts (idempotency)', () => {
     const snapshot = JSON.parse(JSON.stringify(existing));
     mergeFacts(existing, raw, 9999);
     expect(existing).toEqual(snapshot);
+  });
+});
+
+describe('mergeLogEvents (cross-device sync)', () => {
+  const ev = (t: number, text: string): LogEvent => ({ t, kind: 'dictation', ns: 'personal', text });
+
+  it('sorts by timestamp and dedupes identical (t,kind,text) lines', () => {
+    const merged = mergeLogEvents([ev(3, 'c'), ev(1, 'a'), ev(1, 'a'), ev(2, 'b')]);
+    expect(merged.map((e) => e.text)).toEqual(['a', 'b', 'c']);
+  });
+
+  it('keeps same-timestamp events that differ in text', () => {
+    const merged = mergeLogEvents([ev(1, 'a'), ev(1, 'b')]);
+    expect(merged).toHaveLength(2);
+  });
+
+  it('is idempotent — merging an already-merged log is a no-op', () => {
+    const once = mergeLogEvents([ev(2, 'b'), ev(1, 'a'), ev(2, 'b')]);
+    expect(mergeLogEvents(once)).toEqual(once);
+  });
+});
+
+describe('isLockStale', () => {
+  it('honors a fresh lock and reclaims an expired one', () => {
+    expect(isLockStale(1_000_000, 1_000_000 + 60_000)).toBe(false); // 1 min < 1h ttl
+    expect(isLockStale(1_000_000, 1_000_000 + 2 * 60 * 60 * 1000)).toBe(true); // 2h > 1h
   });
 });
 

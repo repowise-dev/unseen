@@ -75,6 +75,13 @@ const api = {
     ipcRenderer.invoke(IPC.launchAgentInstall),
   launchAgentUninstall: (): Promise<{ ok: boolean; error?: string }> =>
     ipcRenderer.invoke(IPC.launchAgentUninstall),
+  dataDirInfo: (): Promise<{
+    current: string;
+    isDefault: boolean;
+    local: string;
+    iCloud: string;
+  }> => ipcRenderer.invoke(IPC.dataDirInfo),
+  dataDirSet: (target: string): Promise<Settings> => ipcRenderer.invoke(IPC.dataDirSet, target),
   onDictationStart: (cb: () => void) => ipcRenderer.on(IPC.evDictationStart, () => cb()),
   onDictationStop: (cb: () => void) => ipcRenderer.on(IPC.evDictationStop, () => cb()),
   onDictationCleanupDelta: (cb: (text: string) => void) =>
